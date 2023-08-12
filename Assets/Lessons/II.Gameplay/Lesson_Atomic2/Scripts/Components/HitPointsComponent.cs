@@ -1,10 +1,5 @@
 namespace Lessons.Gameplay.Atomic2
 {
-    public interface IHitPointsComponent
-    {
-        int HitPoints { get; }
-    }
-
     public sealed class HitPointsComponent : IHitPointsComponent
     {
         public int HitPoints
