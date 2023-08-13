@@ -33,6 +33,11 @@ namespace Assets.Scripts.Common
             StartGame();
         }
 
+        private void Update()
+        {
+            UpdateGameListener(Time.deltaTime);
+        }
+
         private void OnDisable()
         {
             Disable();
@@ -53,6 +58,18 @@ namespace Assets.Scripts.Common
                 listener.StartGame();
             }
             _state = StateGame.PLAYING;
+        }
+
+        public void UpdateGameListener(float deltaTime)
+        {
+            if (_state != StateGame.PLAYING)
+                return;
+
+            foreach (var listener in _container.Resolve<IEnumerable<IUpdateListener>>())
+            {
+                listener.Update(deltaTime);
+            }
+
         }
 
         public void Disable()

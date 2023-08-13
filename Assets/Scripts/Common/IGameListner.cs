@@ -18,6 +18,6 @@ namespace Assets.Scripts.Common
     }
     public interface IUpdateListener : IGameListener
     {
-        void Update();
+        void Update(float deltaTime);
     }
 }

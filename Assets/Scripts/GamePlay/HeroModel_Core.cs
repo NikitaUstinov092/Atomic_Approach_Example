@@ -10,7 +10,6 @@ namespace Assets.Scripts.GamePlay
     [Serializable]
     public sealed class HeroModel_Core
     {
-        [SerializeField]
         public Transform Transform;
 
         public AtomicVariable<int> HitPoints = new();
@@ -19,11 +18,17 @@ namespace Assets.Scripts.GamePlay
 
         public AtomicEvent OnDeath = new();
 
+        public AtomicVariable<float> Speed = new();
+
         [Inject]
         public MoveEngine MoveEngine;
+
+        [Inject]
+        public RotationEngine RotateEngine;
         public void Init()
         {
-            MoveEngine.Construct(Transform);
+            MoveEngine.Construct(Transform, Speed);
+            RotateEngine.Construct(Transform, Camera.main);
 
             OnTakeDamage += damage =>
             {
