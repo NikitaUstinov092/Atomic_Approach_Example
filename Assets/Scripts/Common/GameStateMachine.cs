@@ -43,7 +43,7 @@ namespace Assets.Scripts.Common
             Disable();
         }
 
-        public void InitGame()
+        private void InitGame()
         {
             foreach (var listener in _container.Resolve<IEnumerable<IInitListener>>())
             {
@@ -51,7 +51,7 @@ namespace Assets.Scripts.Common
             }
         }
 
-        public void StartGame()
+        private void StartGame()
         {
             foreach (var listener in _container.Resolve<IEnumerable<IStartListener>>())
             {
@@ -60,7 +60,7 @@ namespace Assets.Scripts.Common
             _state = StateGame.PLAYING;
         }
 
-        public void UpdateGameListener(float deltaTime)
+        private void UpdateGameListener(float deltaTime)
         {
             if (_state != StateGame.PLAYING)
                 return;
@@ -69,10 +69,9 @@ namespace Assets.Scripts.Common
             {
                 listener.Update(deltaTime);
             }
-
         }
 
-        public void Disable()
+        private void Disable()
         {
             foreach (var listener in _container.Resolve<IEnumerable<IDisableListener>>())
             {
