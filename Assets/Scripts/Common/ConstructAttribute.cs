@@ -1,7 +1,7 @@
 using System;
 using JetBrains.Annotations;
 
-namespace Declarative
+namespace Common
 {
     [MeansImplicitUse]
     [AttributeUsage(AttributeTargets.Method)]

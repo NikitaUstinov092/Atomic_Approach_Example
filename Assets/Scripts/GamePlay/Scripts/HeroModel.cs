@@ -1,5 +1,7 @@
 using Declarative;
+using GamePlay.Scripts;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Lessons.Gameplay.Atomic1
 {
@@ -7,10 +9,10 @@ namespace Lessons.Gameplay.Atomic1
     {
         [Section]
         [SerializeField]
-        public HeroModel_Core core = new();
-
+        public HeroModel_Core Core = new();
+        
         [Section]
         [SerializeField]
-        public HeroModel_View view = new();
+        public HeroModel_View View = new();
     }
 }

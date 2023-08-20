@@ -9,7 +9,7 @@ namespace Lessons.Gameplay.Atomic1
 
         private void Update()
         {
-            var onMove = this.hero.core.move.onMove;
+            var onMove = this.hero.Core.move.onMove;
             
             if (Input.GetKey(KeyCode.LeftArrow))
             {

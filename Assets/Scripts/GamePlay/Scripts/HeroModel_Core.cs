@@ -1,9 +1,11 @@
 using System;
+using Assets.Scripts.Custom;
 using Declarative;
+using Lessons.Gameplay;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace Lessons.Gameplay.Atomic1
+namespace GamePlay.Scripts
 {
     [Serializable]
     public sealed class HeroModel_Core
@@ -15,6 +17,10 @@ namespace Lessons.Gameplay.Atomic1
         [Section]
         [SerializeField]
         public Move move = new();
+        
+        [Section]
+        [SerializeField]
+        public Rotate rotate = new();
 
         [Serializable]
         public sealed class Life
@@ -44,7 +50,7 @@ namespace Lessons.Gameplay.Atomic1
         {
             [SerializeField]
             public Transform moveTransform;
-
+          
             [ShowInInspector]
             public AtomicEvent<Vector3> onMove = new();
 
@@ -78,11 +84,59 @@ namespace Lessons.Gameplay.Atomic1
                 {
                     if (this.moveRequired.Value)
                     {
-                        this.moveTransform.position += this.moveDirection.Value * (this.speed.Value * deltaTime);
+                        this.moveTransform.localPosition += this.moveDirection.Value * (this.speed.Value * deltaTime);
                         this.moveRequired.Value = false;
                     }
                 });
             }
         }
+        [Serializable]
+        public sealed class Rotate
+        {
+            [SerializeField]
+            public Camera cam;
+            
+            [Section]
+            public RotationEngine rotationMotor = new();
+            
+            [SerializeField]
+            public Transform RTransform;
+            
+            [ShowInInspector]
+            public AtomicEvent<Vector3> onRotate = new();
+            
+            private readonly FixedUpdateMechanics fixedUpdate = new();
+            
+            [SerializeField]
+            public AtomicVariable<Vector3> rotateDirection = new();
+
+            [SerializeField]
+            public AtomicVariable<float> speed = new();
+            
+            [Construct]
+            public void Construct(Life life)
+            {
+                var isDeath = life.isDeath;
+                
+                rotationMotor.Construct(RTransform, cam);
+                
+                
+                /*
+                onRotate += rotateDir =>
+                {
+                    if (isDeath.Value)
+                    {
+                        return;
+                    }
+                };*/
+                onRotate += rotateDir => rotationMotor.Rotate(rotateDir);
+                
+                this.fixedUpdate.Construct(deltaTime =>
+                {
+                    rotationMotor.FixedUpdate();
+                });
+            }
+        }
+        
     }
 }

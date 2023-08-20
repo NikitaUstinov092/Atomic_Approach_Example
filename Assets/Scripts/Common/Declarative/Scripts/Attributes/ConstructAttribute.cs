@@ -7,5 +7,8 @@ namespace Declarative
     [AttributeUsage(AttributeTargets.Method)]
     public sealed class ConstructAttribute : Attribute
     {
+        public ConstructAttribute()
+        {
+        }
     }
 }

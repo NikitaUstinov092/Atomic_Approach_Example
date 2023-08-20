@@ -1,6 +1,10 @@
 using System;
+using System.Numerics;
 using Declarative;
+using GamePlay.Scripts;
 using UnityEngine;
+using Quaternion = UnityEngine.Quaternion;
+using Vector3 = UnityEngine.Vector3;
 
 namespace Lessons.Gameplay.Atomic1
 {
@@ -17,6 +21,8 @@ namespace Lessons.Gameplay.Atomic1
 
         [SerializeField]
         public Transform visualTransform;
+        
+        public Vector3 rotationAngle;
 
         private readonly LateUpdateMechanics lateUpdate = new();
 
@@ -38,12 +44,12 @@ namespace Lessons.Gameplay.Atomic1
                 if (moveRequired.Value)
                 {
                     this.animator.SetInteger(State, MOVE_STATE);
-                    this.visualTransform.rotation = Quaternion.LookRotation(moveDirection.Value);
                 }
                 else
                 {
                     this.animator.SetInteger(State, IDLE_STATE);
                 }
+                
             });
         }
     }
