@@ -2,8 +2,10 @@ using System;
 using Assets.Scripts.Custom;
 using Declarative;
 using Lessons.Gameplay;
+using ScriptableObject;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace GamePlay.Scripts
 {
@@ -21,6 +23,10 @@ namespace GamePlay.Scripts
         [Section]
         [SerializeField]
         public Rotate rotate = new();
+        
+        [Section]
+        [SerializeField]
+        public Shoot shoot = new();
 
         [Serializable]
         public sealed class Life
@@ -69,74 +75,84 @@ namespace GamePlay.Scripts
             public void Construct(Life life)
             {
                 var isDeath = life.isDeath;
-                this.onMove += direction =>
+                onMove += direction =>
                 {
                     if (isDeath.Value)
                     {
                         return;
                     }
-
-                    this.moveDirection.Value = direction;
-                    this.moveRequired.Value = true;
+                    moveDirection.Value = (moveTransform.forward * direction.z + moveTransform.right * direction.x).normalized;
+                    moveRequired.Value = true;
                 };
 
-                this.fixedUpdate.Construct(deltaTime =>
+                fixedUpdate.Construct(deltaTime =>
                 {
-                    if (this.moveRequired.Value)
+                    if (moveRequired.Value)
                     {
-                        this.moveTransform.localPosition += this.moveDirection.Value * (this.speed.Value * deltaTime);
-                        this.moveRequired.Value = false;
+                        moveTransform.position += this.moveDirection.Value * (this.speed.Value * deltaTime);
+                        moveRequired.Value = false;
                     }
                 });
             }
         }
         [Serializable]
         public sealed class Rotate
-        {
+        { 
             [SerializeField]
-            public Camera cam;
-            
-            [Section]
-            public RotationEngine rotationMotor = new();
+            public Camera PlayerCamera;
             
             [SerializeField]
-            public Transform RTransform;
+            public Transform PlayerTransform;
             
-            [ShowInInspector]
-            public AtomicEvent<Vector3> onRotate = new();
+            public RotationEngine RotationMotor = new();
             
+            public AtomicEvent<Vector3> OnGetVectorCursor = new();
+           
             private readonly FixedUpdateMechanics fixedUpdate = new();
-            
-            [SerializeField]
-            public AtomicVariable<Vector3> rotateDirection = new();
 
-            [SerializeField]
-            public AtomicVariable<float> speed = new();
-            
             [Construct]
             public void Construct(Life life)
             {
                 var isDeath = life.isDeath;
-                
-                rotationMotor.Construct(RTransform, cam);
-                
-                
-                /*
-                onRotate += rotateDir =>
+
+                RotationMotor.Construct(PlayerTransform, PlayerCamera);
+
+                OnGetVectorCursor += rotateDir =>
                 {
                     if (isDeath.Value)
-                    {
                         return;
-                    }
-                };*/
-                onRotate += rotateDir => rotationMotor.Rotate(rotateDir);
-                
-                this.fixedUpdate.Construct(deltaTime =>
+
+                    RotationMotor.SetRotationVector(rotateDir);
+                };
+
+                fixedUpdate.Construct(deltaTime =>
                 {
-                    rotationMotor.FixedUpdate();
+                    RotationMotor.UpdateRotation();
                 });
+
             }
         }
-        
+
+        [Serializable]
+        public sealed class Shoot
+        {
+            public ShootEngine ShootEngine;
+            public BulletConfig BulletConfig;
+            public AtomicEvent OnGetPressedFire = new();
+            /*private readonly FixedUpdateMechanics fixedUpdate = new();*/
+
+            [Construct]
+            public void Construct(Life life)
+            {
+                ShootEngine.Construct((BulletConfig));
+                OnGetPressedFire += () => { ShootEngine.CreateBullet(); };
+                
+                /*fixedUpdate.Construct(deltaTime =>
+                {
+                    ShootEngine.Cooldown();
+                });*/
+            }
+
+        }
     }
 }

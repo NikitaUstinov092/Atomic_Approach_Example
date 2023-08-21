@@ -11,7 +11,7 @@ namespace Assets.Scripts.Input
         void Update()
         {
             Vector3 screenPos = UnityEngine.Input.mousePosition;
-            _hero.Core.rotate.onRotate.Invoke(screenPos);
+            _hero.Core.rotate.OnGetVectorCursor.Invoke(screenPos);
         }
     }
 }
