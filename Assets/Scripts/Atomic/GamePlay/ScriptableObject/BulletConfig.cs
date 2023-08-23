@@ -7,6 +7,7 @@
     {
         public Rigidbody Bullet;
         public float SpeedShoot;
+        public float CoolDown;
         public Transform ShootPoint;
     }
 }

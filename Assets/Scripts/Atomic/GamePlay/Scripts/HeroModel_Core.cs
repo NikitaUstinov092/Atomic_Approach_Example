@@ -139,18 +139,18 @@ namespace GamePlay.Scripts
             public ShootEngine ShootEngine;
             public BulletConfig BulletConfig;
             public AtomicEvent OnGetPressedFire = new();
-            /*private readonly FixedUpdateMechanics fixedUpdate = new();*/
+            private readonly FixedUpdateMechanics fixedUpdate = new();
 
             [Construct]
             public void Construct(Life life)
             {
-                ShootEngine.Construct((BulletConfig));
+                ShootEngine.Construct(BulletConfig);
                 OnGetPressedFire += () => { ShootEngine.CreateBullet(); };
                 
-                /*fixedUpdate.Construct(deltaTime =>
+                fixedUpdate.Construct(deltaTime =>
                 {
                     ShootEngine.Cooldown();
-                });*/
+                });
             }
 
         }

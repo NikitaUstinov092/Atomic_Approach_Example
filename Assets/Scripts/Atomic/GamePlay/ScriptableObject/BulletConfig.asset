@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e05a95d0c85b1b04c90ac98d3def1af8, type: 3}
   m_Name: BulletConfig
   m_EditorClassIdentifier: 
-  Bullet: {fileID: 372755810956916938, guid: bd9798ebb6dcdea41b6339b73aface59, type: 3}
-  SpeedShoot: 5
+  Bullet: {fileID: -3060281794613722148, guid: bd9798ebb6dcdea41b6339b73aface59, type: 3}
+  SpeedShoot: 2000
+  CoolDown: 1
   ShootPoint: {fileID: 0}

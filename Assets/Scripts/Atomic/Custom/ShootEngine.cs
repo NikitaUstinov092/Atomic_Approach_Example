@@ -7,31 +7,47 @@ namespace Assets.Scripts.Custom
 {
     public class ShootEngine: MonoBehaviour
     {
-        private Transform _spawnPoint;
+        private Transform _spawnPointPosition;
         private Rigidbody _bullet;
-        private Vector3 _direction = Vector3.forward;
+        private BulletConfig _config;
+        private GameObject _parent;
         
-        private float _speed;
+        private float _shootSpeed;
         private bool _shootRequired = true;
-        private float _fireRate = 5f; // Частота выстрелов (раз в 5 секунд)
-        private float _nextFireTime; // Время следующего выстрела
+        private float _fireRate; 
+        private float _nextFireTime;
         
         public void Construct(BulletConfig bulletConfig)
         {
-            _spawnPoint = bulletConfig.ShootPoint;
-            _speed = bulletConfig.SpeedShoot;
+            _shootSpeed = bulletConfig.SpeedShoot;
             _bullet = bulletConfig.Bullet;
+            _fireRate = bulletConfig.CoolDown;
+            _spawnPointPosition = bulletConfig.ShootPoint;
+            
+            CreateParent();
+        }
+        private void CreateParent()
+        {
+            _parent = new GameObject("Bullets");
         }
         
         [Button]
         public void CreateBullet()
         {
             if (!_shootRequired)
-            {
                 return;
-            }
-            var bullet = Instantiate(_bullet,_spawnPoint.position, Quaternion.identity);
-            bullet.AddForce(_direction * _speed);
+            
+            var bullet = Instantiate(_bullet,_spawnPointPosition.position, _spawnPointPosition.rotation);
+            bullet.transform.parent = _parent.transform;
+            Shoot(bullet);
+        }
+        
+        [Button]
+        private void Shoot(Rigidbody bullet)
+        {
+            var rotation = _spawnPointPosition.rotation;
+            var localShootDirection = rotation * Vector3.forward;
+            bullet.velocity = localShootDirection * _shootSpeed * Time.deltaTime;
             _shootRequired = false;
         }
         
@@ -40,7 +56,7 @@ namespace Assets.Scripts.Custom
             if (!(Time.time >= _nextFireTime)) return;
             _shootRequired = true;
             
-            _nextFireTime = Time.time + _fireRate; // Установка времени следующего выстрела
+            _nextFireTime = Time.time + _fireRate; 
         }
     }
 }
