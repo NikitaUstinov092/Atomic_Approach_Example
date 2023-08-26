@@ -239,7 +239,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5b7ea3c59afb2d42a3e8f703fdef556, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _hero: {fileID: 3587277424092816631}
+  _entity: {fileID: 3587277424092816633}
   _leftKey: 97
   _rightKey: 100
   _forwardKey: 119
@@ -1039,7 +1039,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1060751495}
-  m_LocalRotation: {x: 0.6391203, y: -0.02033948, z: 0.016911915, w: 0.7686518}
+  m_LocalRotation: {x: 0.6391203, y: -0.020339444, z: 0.016911885, w: 0.7686518}
   m_LocalPosition: {x: 36.358883, y: 2.085163, z: -1.4362711}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1127,6 +1127,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _heroModel: {fileID: 3587277424092816631}
+--- !u!1 &1142638835 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1960997148460282, guid: a3029e28af10f4f458f5d25d6118a906,
+    type: 3}
+  m_PrefabInstance: {fileID: 1582481753}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1185288759
 GameObject:
   m_ObjectHideFlags: 0
@@ -1605,6 +1611,54 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1582481753}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1582481756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1142638835}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f54e711bbfcdec74db80b5e2e6f08649, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  initOnAwake: 1
+  Core:
+    life:
+      hitPoints:
+        value: 0
+      isDeath:
+        value: 0
+    ZombieChase:
+      moveTransform: {fileID: 1582481754}
+      Target:
+        value: {fileID: 3587277424092816630}
+      Speed:
+        value: 2
+      moveDirection:
+        value: {x: 0, y: 0, z: 0}
+    Distance:
+      moveTransform: {fileID: 1582481754}
+      Target:
+        value: {fileID: 3587277424092816630}
+      DistanceTarget:
+        value: 1
+      ClosedTarget:
+        value: 0
+--- !u!114 &1582481757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1142638835}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf874da54b7559e4b912cc795193dcd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  model: {fileID: 1582481756}
 --- !u!1 &1586887914
 GameObject:
   m_ObjectHideFlags: 0
@@ -1879,7 +1933,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1779381465}
-  m_LocalRotation: {x: 0.6391203, y: -0.02033948, z: 0.016911915, w: 0.7686518}
+  m_LocalRotation: {x: 0.6391203, y: -0.020339444, z: 0.016911885, w: 0.7686518}
   m_LocalPosition: {x: 36.358883, y: 2.085163, z: -1.4362711}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3226,6 +3280,7 @@ GameObject:
   - component: {fileID: 3587277424092816630}
   - component: {fileID: 3587277424083225450}
   - component: {fileID: 3587277424092816631}
+  - component: {fileID: 3587277424092816633}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -4308,6 +4363,7 @@ MonoBehaviour:
     shoot:
       ShootEngine: {fileID: 1586887916}
       BulletConfig: {fileID: 11400000, guid: 3bf8f703578e9664b8857f46fd492107, type: 2}
+      SpawnPointShoot: {fileID: 286967597}
   View:
     animator: {fileID: 3587277424083225450}
     visualTransform: {fileID: 3587277424092816630}
@@ -4328,6 +4384,19 @@ Transform:
   m_Father: {fileID: 3587277424092816594}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3587277424092816633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3587277424092723478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db85a79762c74804084fdf8eb33df977, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  model: {fileID: 3587277424092816631}
 --- !u!4 &3587277424092816634
 Transform:
   m_ObjectHideFlags: 0

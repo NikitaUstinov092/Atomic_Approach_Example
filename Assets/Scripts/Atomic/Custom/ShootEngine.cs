@@ -7,7 +7,7 @@ namespace Assets.Scripts.Custom
 {
     public class ShootEngine: MonoBehaviour
     {
-        private Transform _spawnPointPosition;
+        private Transform _spawnPoint;
         private Rigidbody _bullet;
         private BulletConfig _config;
         private GameObject _parent;
@@ -17,12 +17,12 @@ namespace Assets.Scripts.Custom
         private float _fireRate; 
         private float _nextFireTime;
         
-        public void Construct(BulletConfig bulletConfig)
+        public void Construct(BulletConfig bulletConfig, Transform spawnPoint)
         {
             _shootSpeed = bulletConfig.SpeedShoot;
             _bullet = bulletConfig.Bullet;
             _fireRate = bulletConfig.CoolDown;
-            _spawnPointPosition = bulletConfig.ShootPoint;
+            _spawnPoint = spawnPoint;
             
             CreateParent();
         }
@@ -37,7 +37,7 @@ namespace Assets.Scripts.Custom
             if (!_shootRequired)
                 return;
             
-            var bullet = Instantiate(_bullet,_spawnPointPosition.position, _spawnPointPosition.rotation);
+            var bullet = Instantiate(_bullet,_spawnPoint.position, _spawnPoint.rotation);
             bullet.transform.parent = _parent.transform;
             Shoot(bullet);
         }
@@ -45,7 +45,7 @@ namespace Assets.Scripts.Custom
         [Button]
         private void Shoot(Rigidbody bullet)
         {
-            var rotation = _spawnPointPosition.rotation;
+            var rotation = _spawnPoint.rotation;
             var localShootDirection = rotation * Vector3.forward;
             bullet.velocity = localShootDirection * _shootSpeed * Time.deltaTime;
             _shootRequired = false;

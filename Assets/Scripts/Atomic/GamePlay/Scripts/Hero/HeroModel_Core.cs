@@ -7,8 +7,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace GamePlay.Scripts
-{
+
     [Serializable]
     public sealed class HeroModel_Core
     {
@@ -52,7 +51,7 @@ namespace GamePlay.Scripts
         }
 
         [Serializable]
-        public sealed class Move
+        public class Move
         {
             [SerializeField]
             public Transform moveTransform;
@@ -138,13 +137,14 @@ namespace GamePlay.Scripts
         {
             public ShootEngine ShootEngine;
             public BulletConfig BulletConfig;
+            public Transform SpawnPointShoot;
             public AtomicEvent OnGetPressedFire = new();
             private readonly FixedUpdateMechanics fixedUpdate = new();
 
             [Construct]
             public void Construct(Life life)
             {
-                ShootEngine.Construct(BulletConfig);
+                ShootEngine.Construct(BulletConfig, SpawnPointShoot);
                 OnGetPressedFire += () => { ShootEngine.CreateBullet(); };
                 
                 fixedUpdate.Construct(deltaTime =>
@@ -155,4 +155,3 @@ namespace GamePlay.Scripts
 
         }
     }
-}

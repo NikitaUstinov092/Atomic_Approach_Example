@@ -1,5 +1,6 @@
-﻿using Lessons.Gameplay.Atomic1;
+﻿using Atomic.Components;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 
 namespace Assets.Scripts.Input
@@ -7,7 +8,7 @@ namespace Assets.Scripts.Input
     public sealed class MoveInput : MonoBehaviour
     {
         [SerializeField]
-        private HeroModel _hero;
+        private Entity _entity;
 
         [SerializeField] 
         private KeyCode _leftKey;
@@ -28,28 +29,31 @@ namespace Assets.Scripts.Input
             if (UnityEngine.Input.GetKey(_leftKey))
             {
                 _direction = Vector3.left;
-                ApplyMove();
+                ApplyMove(_direction);
             }
             else if (UnityEngine.Input.GetKey(_rightKey))
             {
                 _direction = Vector3.right;
-                ApplyMove();
+                ApplyMove(_direction);
             }
             else if (UnityEngine.Input.GetKey(_forwardKey))
             {
                 _direction = Vector3.forward;
-                ApplyMove();
+                ApplyMove(_direction);
             }
             else if (UnityEngine.Input.GetKey(_backKey))
             {
                 _direction = Vector3.back;
-                ApplyMove();
+                ApplyMove(_direction);
             }
         }
 
-        private void ApplyMove()
+        private void ApplyMove(Vector3 direction)
         {
-            _hero.Core.move.onMove.Invoke(_direction);
+            if (_entity.TryGet(out IMoveComponent moveComponent))
+            {
+                moveComponent.Move(direction);
+            }
         }
     }
 }

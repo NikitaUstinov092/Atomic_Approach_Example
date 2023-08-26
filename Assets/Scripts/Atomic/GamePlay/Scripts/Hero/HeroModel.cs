@@ -1,7 +1,6 @@
 using Declarative;
-using GamePlay.Scripts;
 using UnityEngine;
-using UnityEngine.Serialization;
+
 
 namespace Lessons.Gameplay.Atomic1
 {

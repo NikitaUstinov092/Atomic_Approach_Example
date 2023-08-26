@@ -1,9 +1,6 @@
 using System;
-using System.Numerics;
 using Declarative;
-using GamePlay.Scripts;
 using UnityEngine;
-using Quaternion = UnityEngine.Quaternion;
 using Vector3 = UnityEngine.Vector3;
 
 namespace Lessons.Gameplay.Atomic1
