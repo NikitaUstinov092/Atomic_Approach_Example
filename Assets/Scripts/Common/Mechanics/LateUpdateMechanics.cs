@@ -15,4 +15,9 @@ using Declarative;
         {
             this.action.Invoke(deltaTime);
         }
+
+        public void SetAction(Action<object> action1)
+        {
+            throw new NotImplementedException();
+        }
     }

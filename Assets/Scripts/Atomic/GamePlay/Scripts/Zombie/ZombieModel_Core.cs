@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using Declarative;
 using Lessons.Gameplay;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Atomic.GamePlay.Scripts.Zombie
 {
@@ -34,7 +32,7 @@ namespace Atomic.GamePlay.Scripts.Zombie
             [SerializeField]
             public AtomicVariable<float> Speed = new();
 
-            public AtomicVariable<Vector3> moveDirection = new();
+            [SerializeField] public AtomicVariable<bool> IsChasing = new();
 
             private readonly FixedUpdateMechanics fixedUpdate = new();
 
@@ -47,12 +45,14 @@ namespace Atomic.GamePlay.Scripts.Zombie
                 fixedUpdate.Construct(deltaTime =>
                 {
                     if (isDeath.Value || closedToTarget.Value)
+                    {
+                        IsChasing.Value = false;
                         return;
-
+                    }
                     var targetPosition = Target.Value.position;
                     
                     moveTransform.position = Vector3.MoveTowards( moveTransform.position, targetPosition, Speed.Value * deltaTime);
-                    moveTransform.LookAt(targetPosition);
+                    IsChasing.Value = true;
                 });
             }
         }
@@ -78,10 +78,11 @@ namespace Atomic.GamePlay.Scripts.Zombie
             [Construct]
             public void Construct()
             {
-                lateUpdate.Construct(deltaTime =>
+                lateUpdate.Construct(_ =>
                 {
                     var distance = Vector3.Distance(moveTransform.position, Target.Value.position);
                     ClosedTarget.Value = distance < DistanceTarget.Value;
+                   
                 });
             }
         }
