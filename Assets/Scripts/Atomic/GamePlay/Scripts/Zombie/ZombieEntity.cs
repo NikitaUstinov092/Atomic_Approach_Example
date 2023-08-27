@@ -9,7 +9,7 @@ namespace Atomic.GamePlay.Scripts.Zombie
         private ZombieModel model;
         private void Awake()
         {
-          
+            Add(new TakeDamageComponent(model.Core.life.onTakeDamage));
         }
     }
 }

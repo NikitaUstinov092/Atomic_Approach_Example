@@ -5,7 +5,6 @@ using Lessons.Gameplay;
 using ScriptableObject;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 
     [Serializable]
@@ -32,20 +31,30 @@ using UnityEngine.Serialization;
         {
             [ShowInInspector]
             public AtomicEvent<int> onTakeDamage = new();
+            
+            [ShowInInspector]
+            public AtomicEvent onDeath = new();
 
             [SerializeField]
             public AtomicVariable<int> hitPoints = new();
 
             [SerializeField]
-            public AtomicVariable<bool> isDeath;
+            public AtomicVariable<bool> isDeath; //Нахер не нужна
 
             [Construct]
             public void Construct()
             {
-                this.onTakeDamage += damage => this.hitPoints.Value -= damage;
-                this.hitPoints.OnChanged += hitPoints =>
+                onTakeDamage += damage =>
                 {
-                    if (hitPoints <= 0) this.isDeath.Value = true;
+                    hitPoints.Value -= damage;
+                };
+                hitPoints.OnChanged += hitPoints =>
+                {
+                    if (hitPoints <= 0)
+                    {
+                        isDeath.Value = true;
+                        onDeath?.Invoke();
+                    }
                 };
             }
         }
@@ -142,15 +151,18 @@ using UnityEngine.Serialization;
             private readonly FixedUpdateMechanics fixedUpdate = new();
 
             [Construct]
-            public void Construct(Life life)
+            public void Construct(Move move)
             {
                 ShootEngine.Construct(BulletConfig, SpawnPointShoot);
-                OnGetPressedFire += () => { ShootEngine.CreateBullet(); };
+                OnGetPressedFire += () =>
+                {
+                    ShootEngine.CreateBullet();
+                };
                 
-                fixedUpdate.Construct(deltaTime =>
+                fixedUpdate.Construct(deltaTime => //TO DO убрать внутрь класса ShootEngine или вынести в отдельный класс 
                 {
                     ShootEngine.Cooldown();
-                });
+                }); 
             }
 
         }

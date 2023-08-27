@@ -11,6 +11,7 @@ namespace Lessons.Gameplay.Atomic1
         private static readonly int State = Animator.StringToHash("State");
         private const int IDLE_STATE = 0;
         private const int MOVE_STATE = 1;
+        private const int ATTACK_STATE = 3;
         private const int DEATH_STATE = 5;
 
         [SerializeField]
@@ -28,24 +29,31 @@ namespace Lessons.Gameplay.Atomic1
         {
             var isDeath = core.life.isDeath;
             var moveRequired = core.move.moveRequired;
-            var moveDirection = core.move.moveDirection;
+            var fireEvent = core.shoot.OnGetPressedFire;
             
             this.lateUpdate.Construct(_ =>
             {
                 if (isDeath.Value)
                 {
-                    this.animator.SetInteger(State, DEATH_STATE);
+                    animator.SetInteger(State, DEATH_STATE);
                     return;
                 }
 
                 if (moveRequired.Value)
                 {
-                    this.animator.SetInteger(State, MOVE_STATE);
+                    animator.SetInteger(State, MOVE_STATE);
+                    return;
                 }
-                else
+               
+                animator.SetInteger(State, IDLE_STATE);
+                
+                
+                fireEvent += () =>
                 {
-                    this.animator.SetInteger(State, IDLE_STATE);
-                }
+                    if(moveRequired.Value)
+                        return;
+                    animator.SetInteger(State, ATTACK_STATE);
+                };
                 
             });
         }

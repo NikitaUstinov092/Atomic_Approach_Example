@@ -19,9 +19,6 @@ namespace Atomic.GamePlay.Scripts.Zombie
         [SerializeField]
         public Transform visualTransform;
         
-        [SerializeField]
-        public Transform targetLookAt;
-
         private readonly LateUpdateMechanics lateUpdate = new();
 
         [Construct]
@@ -29,7 +26,7 @@ namespace Atomic.GamePlay.Scripts.Zombie
         {
             var isDeath = core.life.isDeath;
             var isChasing = core.ZombieChase.IsChasing;
-            var chasingObject = targetLookAt.position;
+            var chasingObject = core.ZombieChase.Target.Value;
             
             lateUpdate.Construct(_ =>
             {
@@ -41,12 +38,12 @@ namespace Atomic.GamePlay.Scripts.Zombie
                 if (isChasing.Value)
                 {
                     animator.SetInteger(State, MOVE_STATE);
-                    visualTransform.rotation = Quaternion.LookRotation(chasingObject);
+                    visualTransform.LookAt(chasingObject.position);
                 }
                 else if (!isChasing.Value)
                 {
                     animator.SetInteger(State, ATTACK_STATE);
-                    visualTransform.rotation = Quaternion.LookRotation(chasingObject);
+                    visualTransform.LookAt(chasingObject.position);
                 }
             });
         }
