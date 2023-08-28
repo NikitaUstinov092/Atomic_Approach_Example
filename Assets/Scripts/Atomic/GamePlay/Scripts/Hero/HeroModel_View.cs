@@ -9,18 +9,16 @@ namespace Lessons.Gameplay.Atomic1
     public sealed class HeroModel_View
     {
         private static readonly int State = Animator.StringToHash("State");
+        
         private const int IDLE_STATE = 0;
-        private const int MOVE_STATE = 1;
-        private const int ATTACK_STATE = 3;
-        private const int DEATH_STATE = 5;
+        private const int MOVE_STATE_FRONT = 1;
+        private const int MOVE_STATE_RIGHT = 2;
+        private const int MOVE_STATE_LEFT = 3;
+        private const int MOVE_STATE_BACK = 4;
+        private const int DEATH_STATE = 6;
 
         [SerializeField]
         public Animator animator;
-
-        [SerializeField]
-        public Transform visualTransform;
-        
-        public Vector3 rotationAngle;
 
         private readonly LateUpdateMechanics lateUpdate = new();
 
@@ -29,32 +27,48 @@ namespace Lessons.Gameplay.Atomic1
         {
             var isDeath = core.life.isDeath;
             var moveRequired = core.move.moveRequired;
-            var fireEvent = core.shoot.OnGetPressedFire;
+            var inputVector = core.move.onMove;
             
-            this.lateUpdate.Construct(_ =>
+            lateUpdate.Construct(_ =>
             {
                 if (isDeath.Value)
                 {
                     animator.SetInteger(State, DEATH_STATE);
                     return;
                 }
-
-                if (moveRequired.Value)
+                
+                if (!moveRequired.Value)
                 {
-                    animator.SetInteger(State, MOVE_STATE);
+                    animator.SetInteger(State, IDLE_STATE);
                     return;
                 }
-               
-                animator.SetInteger(State, IDLE_STATE);
                 
-                
-                fireEvent += () =>
+                inputVector += direction =>
                 {
-                    if(moveRequired.Value)
+                    if (isDeath.Value)
                         return;
-                    animator.SetInteger(State, ATTACK_STATE);
+                    
+                    if (direction == Vector3.forward)
+                    {
+                        animator.SetInteger(State, MOVE_STATE_FRONT);
+                        return;
+                    }
+                    if (direction == -Vector3.forward)
+                    {
+                        animator.SetInteger(State, MOVE_STATE_BACK);
+                        return;
+                    }
+                    if (direction == Vector3.left)
+                    {
+                        animator.SetInteger(State, MOVE_STATE_LEFT);
+                        return;
+                    }
+                    
+                    if (direction  == Vector3.right)
+                    {
+                        animator.SetInteger(State, MOVE_STATE_RIGHT);
+                    }
                 };
-                
             });
         }
     }

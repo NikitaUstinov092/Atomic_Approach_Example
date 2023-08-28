@@ -10,10 +10,8 @@ public class ShootInput : MonoBehaviour
    {
       if (Input.GetMouseButtonDown(0))
       {
-         Debug.Log("++");
          _heroModel.Core.shoot.OnGetPressedFire.Invoke();
       }
-        
    }
 }
 

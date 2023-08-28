@@ -5,9 +5,10 @@ using Lessons.Gameplay;
 using ScriptableObject;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 
-    [Serializable]
+[Serializable]
     public sealed class HeroModel_Core
     {
         [Section]
@@ -32,11 +33,11 @@ using UnityEngine;
             [ShowInInspector]
             public AtomicEvent<int> onTakeDamage = new();
             
-            [ShowInInspector]
-            public AtomicEvent onDeath = new();
+            [FormerlySerializedAs("onDeath")] [ShowInInspector]
+            public AtomicEvent OnDeath = new();
 
-            [SerializeField]
-            public AtomicVariable<int> hitPoints = new();
+            [FormerlySerializedAs("hitPoints")] [SerializeField]
+            public AtomicVariable<int> HitPoints = new();
 
             [SerializeField]
             public AtomicVariable<bool> isDeath; //Нахер не нужна
@@ -46,15 +47,14 @@ using UnityEngine;
             {
                 onTakeDamage += damage =>
                 {
-                    hitPoints.Value -= damage;
+                    HitPoints.Value -= damage;
                 };
-                hitPoints.OnChanged += hitPoints =>
+                HitPoints.OnChanged += hitPoints =>
                 {
-                    if (hitPoints <= 0)
-                    {
-                        isDeath.Value = true;
-                        onDeath?.Invoke();
-                    }
+                    if (hitPoints > 0) 
+                        return;
+                    isDeath.Value = true;
+                    OnDeath?.Invoke();
                 };
             }
         }
@@ -66,14 +66,13 @@ using UnityEngine;
             public Transform moveTransform;
           
             [ShowInInspector]
-            public AtomicEvent<Vector3> onMove = new();
+            public AtomicEvent<Vector3> onMove = new(); 
+            
+            private AtomicVariable<Vector3> moveDirection = new();
 
             [SerializeField]
             public AtomicVariable<bool> moveRequired = new();
-
-            [SerializeField]
-            public AtomicVariable<Vector3> moveDirection = new();
-
+            
             [SerializeField]
             public AtomicVariable<float> speed = new();
 
@@ -83,23 +82,19 @@ using UnityEngine;
             public void Construct(Life life)
             {
                 var isDeath = life.isDeath;
-                onMove += direction =>
+                onMove += direction  =>
                 {
-                    if (isDeath.Value)
-                    {
-                        return;
-                    }
                     moveDirection.Value = (moveTransform.forward * direction.z + moveTransform.right * direction.x).normalized;
                     moveRequired.Value = true;
                 };
 
                 fixedUpdate.Construct(deltaTime =>
                 {
-                    if (moveRequired.Value)
-                    {
-                        moveTransform.position += this.moveDirection.Value * (this.speed.Value * deltaTime);
-                        moveRequired.Value = false;
-                    }
+                    if (!moveRequired.Value || isDeath.Value) 
+                        return;
+                    
+                    moveTransform.position += moveDirection.Value * (speed.Value * deltaTime);
+                    moveRequired.Value = false;
                 });
             }
         }
@@ -123,13 +118,13 @@ using UnityEngine;
             [Construct]
             public void Construct(Life life)
             {
-                var isDeath = life.isDeath.Value;
+                var isDeath = life.isDeath;
 
                 RotationMotor.Construct(PlayerTransform, PlayerCamera, RotationSpeed.Value);
                 
-                fixedUpdate.Construct(deltaTime =>
+                fixedUpdate.Construct(_ =>
                 {
-                    if(isDeath)
+                    if(isDeath.Value)
                         return;
                     
                     var cursorScreenPos = RotateDirection.Value;
@@ -149,16 +144,23 @@ using UnityEngine;
             private readonly FixedUpdateMechanics fixedUpdate = new();
 
             [Construct]
-            public void Construct(Move move)
+            public void Construct(Move move, Life life)
             {
                 ShootEngine.Construct(BulletConfig, SpawnPointShoot);
+                
+                var isDead = life.isDeath;
+                
                 OnGetPressedFire += () =>
                 {
+                    if(isDead.Value)
+                        return;
                     ShootEngine.CreateBullet();
                 };
                 
                 fixedUpdate.Construct(deltaTime => //TO DO убрать внутрь класса ShootEngine или вынести в отдельный класс 
                 {
+                    if(isDead.Value)
+                        return;
                     ShootEngine.Cooldown();
                 }); 
             }

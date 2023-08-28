@@ -10,6 +10,7 @@ namespace Atomic.GamePlay.Scripts.Zombie
     {
         private static readonly int State = Animator.StringToHash("State");
         private const int MOVE_STATE = 1;
+        private const int IDLE_STATE = 2;
         private const int ATTACK_STATE = 3;
         private const int DEATH_STATE = 5;
         
@@ -26,7 +27,8 @@ namespace Atomic.GamePlay.Scripts.Zombie
         {
             var isDeath = core.life.isDeath;
             var isChasing = core.ZombieChase.IsChasing;
-            var chasingObject = core.ZombieChase.Target.Value;
+            var chasingObject = core.ZombieChase.Target;
+            var stopAttack = core.AttackHero.StopAttack;
             
             lateUpdate.Construct(_ =>
             {
@@ -35,15 +37,22 @@ namespace Atomic.GamePlay.Scripts.Zombie
                     animator.SetInteger(State, DEATH_STATE);
                     return;
                 }
-                if (isChasing.Value)
+
+                if (stopAttack.Value)
                 {
-                    animator.SetInteger(State, MOVE_STATE);
-                    visualTransform.LookAt(chasingObject.position);
+                    animator.SetInteger(State, IDLE_STATE);
+                    return;
                 }
-                else if (!isChasing.Value)
+                switch (isChasing.Value)
                 {
-                    animator.SetInteger(State, ATTACK_STATE);
-                    visualTransform.LookAt(chasingObject.position);
+                    case true:
+                        animator.SetInteger(State, MOVE_STATE);
+                        visualTransform.LookAt(chasingObject.Value.position);
+                        break;
+                    case false:
+                        animator.SetInteger(State, ATTACK_STATE);
+                        visualTransform.LookAt(chasingObject.Value.position);
+                        break;
                 }
             });
         }

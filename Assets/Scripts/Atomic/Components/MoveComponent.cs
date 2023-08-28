@@ -19,7 +19,7 @@ namespace Atomic.Components
 
         public void Move(Vector3 direction)
         {
-            this.onMove.Invoke(direction);
+            onMove.Invoke(direction);
         }
     }
 }

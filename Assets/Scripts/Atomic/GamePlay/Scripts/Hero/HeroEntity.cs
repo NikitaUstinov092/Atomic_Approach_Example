@@ -12,5 +12,6 @@ public class HeroEntity : Entity
     {
         Add(new MoveComponent(model.Core.move.onMove));
         Add(new TakeDamageComponent(model.Core.life.onTakeDamage));
+        Add(new LifeComponent(model.Core.life));
     }
 }
