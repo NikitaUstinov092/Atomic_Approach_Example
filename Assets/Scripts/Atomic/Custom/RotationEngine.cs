@@ -1,35 +1,37 @@
-﻿using System;
-using Declarative;
-using UnityEngine;
-using Zenject;
+﻿using UnityEngine;
 
 namespace Assets.Scripts.Custom
 {
     public class RotationEngine
     {
         private Transform _transform;
-        private Quaternion _targetRotation;
         private Camera _playerCamera;
-        private const float _rotationSpeed = 3f;
         
-        public void Construct(Transform transform, Camera playerCam)
+        private float _rotationSpeed;
+        private const float _minCursorDistance = 5f; // Минимальное расстояние от курсора до игрока, при котором не будет поворота
+        
+        public void Construct(Transform transform, Camera playerCam, float speed)
         {
             _transform = transform;
             _playerCamera = playerCam;
+            _rotationSpeed = speed;
         }
 
-        public void SetRotationVector(Vector3 screenPos)
+        public void UpdateRotation(Vector3 cursorScreenPos)
         {
-            Vector3 worldPos = _playerCamera.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, _playerCamera.transform.position.y));
+            var cursorWorldPos = _playerCamera.ScreenToWorldPoint(new Vector3(cursorScreenPos.x, cursorScreenPos.y, _playerCamera.transform.position.y));
 
-            Vector3 direction = worldPos - _transform.position;
+            // Игрок не поворачивается, если курсор слишком близко
+            var cursorDistance = Vector3.Distance(cursorWorldPos, _transform.position);
+            
+            if (cursorDistance < _minCursorDistance)
+                return;
+            
+            var direction = cursorWorldPos - _transform.position;
             direction.y = 0f;
-
-            _targetRotation = Quaternion.LookRotation(direction);
-        }
-        public void UpdateRotation()
-        {
-            _transform.rotation = Quaternion.Slerp(_transform.rotation, _targetRotation, _rotationSpeed * Time.deltaTime);
+           
+            var targetRotation = Quaternion.LookRotation(direction);
+            _transform.rotation = Quaternion.Slerp(_transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
         }
     }
 }

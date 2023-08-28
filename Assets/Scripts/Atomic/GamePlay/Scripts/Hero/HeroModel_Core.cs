@@ -114,28 +114,26 @@ using UnityEngine;
             
             public RotationEngine RotationMotor = new();
             
-            public AtomicEvent<Vector3> OnGetVectorCursor = new();
+            public AtomicVariable<Vector3> RotateDirection;
+            
+            public AtomicVariable<float> RotationSpeed;
            
             private readonly FixedUpdateMechanics fixedUpdate = new();
 
             [Construct]
             public void Construct(Life life)
             {
-                var isDeath = life.isDeath;
+                var isDeath = life.isDeath.Value;
 
-                RotationMotor.Construct(PlayerTransform, PlayerCamera);
-
-                OnGetVectorCursor += rotateDir =>
-                {
-                    if (isDeath.Value)
-                        return;
-
-                    RotationMotor.SetRotationVector(rotateDir);
-                };
-
+                RotationMotor.Construct(PlayerTransform, PlayerCamera, RotationSpeed.Value);
+                
                 fixedUpdate.Construct(deltaTime =>
                 {
-                    RotationMotor.UpdateRotation();
+                    if(isDeath)
+                        return;
+                    
+                    var cursorScreenPos = RotateDirection.Value;
+                    RotationMotor.UpdateRotation(cursorScreenPos);
                 });
 
             }

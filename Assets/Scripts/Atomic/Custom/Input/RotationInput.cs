@@ -8,10 +8,10 @@ namespace Assets.Scripts.Input
     {
         [SerializeField]
         private HeroModel _hero;
-        void Update()
+        void FixedUpdate()
         {
             Vector3 screenPos = UnityEngine.Input.mousePosition;
-            _hero.Core.rotate.OnGetVectorCursor.Invoke(screenPos);
+            _hero.Core.rotate.RotateDirection.Value = screenPos;
         }
     }
 }

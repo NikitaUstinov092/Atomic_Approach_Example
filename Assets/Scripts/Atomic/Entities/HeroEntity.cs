@@ -1,6 +1,8 @@
 using Lessons.Gameplay.Atomic1;
 using UnityEngine;
 using MoveComponent = Atomic.Components.MoveComponent;
+using TakeDamageComponent = Atomic.Components.TakeDamageComponent;
+
 
 public class HeroEntity : Entity
 {
@@ -8,6 +10,7 @@ public class HeroEntity : Entity
     private HeroModel model;
     private void Awake()
     {
-        this.Add(new MoveComponent(model.Core.move.onMove));
+        Add(new MoveComponent(model.Core.move.onMove));
+        Add(new TakeDamageComponent(model.Core.life.onTakeDamage));
     }
 }
