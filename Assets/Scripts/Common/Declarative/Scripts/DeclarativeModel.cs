@@ -15,7 +15,6 @@ namespace Declarative
 
         public virtual void Initialize()
         {
-            this.monoContext = new MonoContext(this);
             this.sections = SectionScanner.ScanSections(this);
 
             foreach (var section in this.sections.Values)
@@ -37,11 +36,12 @@ namespace Declarative
 
         private void Awake()
         {
+            this.monoContext = new MonoContext(this);
+            
             if (this.initOnAwake)
             {
                 this.Initialize();
             }
-            
             this.monoContext.Awake();
         }
 

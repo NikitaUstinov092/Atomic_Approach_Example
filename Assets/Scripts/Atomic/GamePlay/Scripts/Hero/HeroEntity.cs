@@ -11,7 +11,7 @@ public class HeroEntity : Entity
     private void Awake()
     {
         Add(new MoveComponent(model.Core.move.onMove));
-        Add(new TakeDamageComponent(model.Core.life.onTakeDamage));
+        Add(new TakeDamageComponent(model.Core.life.OnTakeDamage));
         Add(new LifeComponent(model.Core.life));
     }
 }

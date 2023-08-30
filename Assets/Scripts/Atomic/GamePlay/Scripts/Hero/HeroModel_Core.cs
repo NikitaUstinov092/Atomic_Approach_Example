@@ -5,10 +5,10 @@ using Lessons.Gameplay;
 using ScriptableObject;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.Serialization;
+using Object = UnityEngine.Object;
 
 
-[Serializable]
+    [Serializable]
     public sealed class HeroModel_Core
     {
         [Section]
@@ -26,34 +26,39 @@ using UnityEngine.Serialization;
         [Section]
         [SerializeField]
         public Shoot shoot = new();
-
+        
+        [Section]
+        [SerializeField]
+        public EntityContainer EntityStorage = new();
+        
         [Serializable]
         public sealed class Life
         {
             [ShowInInspector]
-            public AtomicEvent<int> onTakeDamage = new();
+            public AtomicEvent<int> OnTakeDamage = new();
             
-            [FormerlySerializedAs("onDeath")] [ShowInInspector]
+            [ShowInInspector]
             public AtomicEvent OnDeath = new();
 
-            [FormerlySerializedAs("hitPoints")] [SerializeField]
+            [SerializeField]
             public AtomicVariable<int> HitPoints = new();
 
             [SerializeField]
-            public AtomicVariable<bool> isDeath; //Нахер не нужна
-
+            public AtomicVariable<bool> IsDead;
+            
             [Construct]
             public void Construct()
             {
-                onTakeDamage += damage =>
+                OnTakeDamage += damage =>
                 {
                     HitPoints.Value -= damage;
                 };
+                
                 HitPoints.OnChanged += hitPoints =>
                 {
                     if (hitPoints > 0) 
                         return;
-                    isDeath.Value = true;
+                    IsDead.Value = true;
                     OnDeath?.Invoke();
                 };
             }
@@ -81,7 +86,7 @@ using UnityEngine.Serialization;
             [Construct]
             public void Construct(Life life)
             {
-                var isDeath = life.isDeath;
+                var isDeath = life.IsDead;
                 onMove += direction  =>
                 {
                     moveDirection.Value = (moveTransform.forward * direction.z + moveTransform.right * direction.x).normalized;
@@ -118,7 +123,7 @@ using UnityEngine.Serialization;
             [Construct]
             public void Construct(Life life)
             {
-                var isDeath = life.isDeath;
+                var isDeath = life.IsDead;
 
                 RotationMotor.Construct(PlayerTransform, PlayerCamera, RotationSpeed.Value);
                 
@@ -148,12 +153,13 @@ using UnityEngine.Serialization;
             {
                 ShootEngine.Construct(BulletConfig, SpawnPointShoot);
                 
-                var isDead = life.isDeath;
+                var isDead = life.IsDead;
                 
                 OnGetPressedFire += () =>
                 {
                     if(isDead.Value)
                         return;
+                    
                     ShootEngine.CreateBullet();
                 };
                 
@@ -161,9 +167,33 @@ using UnityEngine.Serialization;
                 {
                     if(isDead.Value)
                         return;
+                    
                     ShootEngine.Cooldown();
                 }); 
             }
-
         }
+        
+        public sealed class Ammo
+        {
+            
+            
+        }
+        
+
+        [Serializable]
+        public sealed class EntityContainer
+        {
+            public Entity Entity;
+
+            [Construct]
+            public void Construct(Life life)
+            {
+                life.OnDeath += () =>
+                {
+                    Object.Destroy(Entity);
+                };
+            }
+            
+        }
+        
     }

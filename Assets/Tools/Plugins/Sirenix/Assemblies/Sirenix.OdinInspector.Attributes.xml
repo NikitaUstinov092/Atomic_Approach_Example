@@ -2686,7 +2686,7 @@
             {
             	// The speed of the car must be less than or equal to 200.
             	[MaxValue(200)]
-            	public float Speed;
+            	public float MinSpeed;
             }
             </code>
             </example>
@@ -2697,7 +2697,7 @@
             {
             	// The speed value must be between 0 and 200.
             	[MinValue(0), MaxValue(200)]
-            	public float Speed;
+            	public float MinSpeed;
             }
             </code>
             </example>
@@ -4524,7 +4524,7 @@
             		// Using the Overlay property, the suffix label will be drawn on top of the property instead of behind it.
             		// Use this for a neat inline look.
             		[SuffixLabel("ms", Overlay = true)]
-            		public float Speed;
+            		public float MinSpeed;
             
             		[SuffixLabel("radians", Overlay = true)]
             		public float Angle;
@@ -5331,7 +5331,7 @@
              public class MyComponent : MonoBehaviour
              {
             		[ValidateInput("ValidateInput")]
-            		public float Speed;
+            		public float MinSpeed;
             
             		// Specify custom output message and message type.
             		[ValidateInput("ValidateInput", "Health must be more than 0!", InfoMessageType.Warning)]

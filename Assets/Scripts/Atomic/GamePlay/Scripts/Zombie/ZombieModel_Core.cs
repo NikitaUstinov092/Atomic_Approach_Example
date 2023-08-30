@@ -3,7 +3,7 @@ using Declarative;
 using Lessons.Gameplay;
 using Atomic.Components;
 using UnityEngine;
-using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 namespace Atomic.GamePlay.Scripts.Zombie
 {
@@ -33,31 +33,39 @@ namespace Atomic.GamePlay.Scripts.Zombie
             public Transform moveTransform;
 
             [SerializeField]
-            public AtomicVariable<Transform> Target = new();
-
+            public Entity Target = new();
+            
             [SerializeField]
-            public AtomicVariable<float> Speed = new();
+            public AtomicVariable<float> MinSpeed = new();
+            
+            [SerializeField]
+            public AtomicVariable<float> MaxSpeed = new();
+            
+            private float _speed;
 
-            [SerializeField] public AtomicVariable<bool> IsChasing = new();
+            [SerializeField] 
+            public AtomicVariable<bool> IsChasing = new();
 
             private readonly FixedUpdateMechanics fixedUpdate = new();
 
             [Construct]
             public void Construct(HeroModel_Core.Life life, DistanceChecker distanceChecker)
             {
-                var isDeath = life.isDeath;
+                var isDeath = life.IsDead;
                 var closedToTarget = distanceChecker.ClosedTarget;
+                _speed = Random.Range(MinSpeed.Value, MaxSpeed.Value);
 
                 fixedUpdate.Construct(deltaTime =>
                 {
-                    if (isDeath.Value || closedToTarget.Value)
+                    if (isDeath.Value || closedToTarget.Value || Target == null)
                     {
                         IsChasing.Value = false;
                         return;
                     }
-                    var targetPosition = Target.Value.position;
+                    var targetPosition = Target.transform.position;
                     
-                    moveTransform.position = Vector3.MoveTowards( moveTransform.position, targetPosition, Speed.Value * deltaTime);
+                    moveTransform.position = Vector3.MoveTowards( moveTransform.position, targetPosition, _speed * deltaTime);
+                    moveTransform.LookAt(targetPosition);
                     IsChasing.Value = true;
                 });
             }
@@ -71,7 +79,7 @@ namespace Atomic.GamePlay.Scripts.Zombie
             public Transform moveTransform;
 
             [SerializeField]
-            public AtomicVariable<Transform> Target = new();
+            public Entity Target = new();
             
             [SerializeField]
             public AtomicVariable<float> DistanceTarget = new();
@@ -84,11 +92,14 @@ namespace Atomic.GamePlay.Scripts.Zombie
             [Construct]
             public void Construct()
             {
+                var targetTransform = Target.transform;
+                
                 fixedUpdate.Construct(_ =>
                 {
-                    var distance = Vector3.Distance(moveTransform.position, Target.Value.position);
+                    if (Target == null)
+                        return;
+                    var distance = Vector3.Distance(moveTransform.position, targetTransform.position);
                     ClosedTarget.Value = distance < DistanceTarget.Value;
-                   
                 });
             }
         }
@@ -106,33 +117,22 @@ namespace Atomic.GamePlay.Scripts.Zombie
             [SerializeField]
             public AtomicVariable<float> AttackDelay = new();
             
-            [FormerlySerializedAs("CanAttack")] [SerializeField]
+            [SerializeField]
             public AtomicVariable<bool> StopAttack;
             
-            private readonly FixedUpdateMechanics fixedUpdate = new();
-            
-            private IGetLifeComponent _playerLife;
+            private readonly LateUpdateMechanics _lateUpdate = new();
             
             private float _timer;
             
             [Construct]
             public void Construct(DistanceChecker distanceChecker, HeroModel_Core.Life Life)
             {
-                fixedUpdate.Construct(deltaTime=>
+                _lateUpdate.Construct(deltaTime=>
                 {
-                    if(Life.isDeath.Value)
-                        return;
-                    
                     if(StopAttack.Value)
                         return;
-                    
-                    if (_playerLife == null)  /// очень на счёт этого сомневаюсь =)))))
-                    {
-                        AttackTarget.TryGet(out IGetLifeComponent playerLife);  
-                        _playerLife = playerLife;
-                    }
 
-                    if (_playerLife.GetLifeComponent().isDeath.Value)
+                    if (AttackTarget == null || Life.IsDead.Value)
                     {
                         StopAttack.Value = true;
                         return;

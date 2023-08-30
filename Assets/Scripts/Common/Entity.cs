@@ -7,7 +7,6 @@ using UnityEngine;
     {
         [SerializeField]
         private readonly List<object> components = new();
-
         public T Get<T>()
         {
             for (int i = 0, count = this.components.Count; i < count; i++)
