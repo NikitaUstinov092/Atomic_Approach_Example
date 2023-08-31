@@ -3730,7 +3730,7 @@ MonoBehaviour:
       moveTransform: {fileID: 4376483663741121}
       Target: {fileID: 3587277424092816633}
       DistanceTarget:
-        value: 0
+        value: 2
       ClosedTarget:
         value: 0
     AttackHero:

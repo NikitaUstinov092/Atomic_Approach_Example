@@ -46,7 +46,7 @@ namespace GamePlay.Custom
         {
             var rotation = _spawnPoint.rotation;
             var localShootDirection = rotation * Vector3.forward;
-            bullet.velocity = localShootDirection * _shootSpeed * Time.deltaTime;
+            bullet.velocity = localShootDirection * _shootSpeed;
             _shootRequired = false;
         }
         

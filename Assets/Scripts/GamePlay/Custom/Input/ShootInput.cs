@@ -1,4 +1,5 @@
 using GamePlay.Hero;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace GamePlay.Custom.Input
@@ -12,8 +13,14 @@ namespace GamePlay.Custom.Input
       {
          if (UnityEngine.Input.GetMouseButtonDown(0))
          {
-            _heroModel.Core.shoot.OnGetPressedFire.Invoke();
+            OnPressed();
          }
+      }
+
+      [Button]
+      private void OnPressed()
+      {
+         _heroModel.Core.shoot.OnGetPressedFire.Invoke();
       }
    }
 }
