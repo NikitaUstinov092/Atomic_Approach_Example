@@ -7614,7 +7614,7 @@
             <param name="target">The target string.</param>
             <param name="ignoreCase"></param>
             <param name="abbreviation"></param>
-            <returns>Distance score. 0 is no match, and 1 is exact match.</returns>
+            <returns>TargetDistance score. 0 is no match, and 1 is exact match.</returns>
         </member>
         <member name="T:Sirenix.Utilities.Editor.GUIFrameCounter">
             <summary>

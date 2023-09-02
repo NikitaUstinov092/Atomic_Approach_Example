@@ -1,43 +1,68 @@
+using System;
 using System.Collections;
-using GamePlay.Zombie;
-using Unity.Mathematics;
+using GamePlay.Components.Interfaces;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace GamePlay.Custom
 {
-    public class EnemyFactory : MonoBehaviour
+    public class EnemyFactory : MonoBehaviour, IStartListener, IEnemyFactory<Entity.Entity>
     {
+        public event Action<Entity.Entity> OnEnemyCreated;
+        
         [SerializeField] 
-        private ZombieModel _enemy;
+        private Entity.Entity _enemy;
     
         [SerializeField]  
-        private Entity.Entity _heroEntity;
+        private Entity.Entity _targetEntity;
 
         [SerializeField] 
         private Transform[] _spawnPoints;
 
         [SerializeField] 
-        private float _delay = 2;
+        private float _delaySpawn = 2;
 
-
-        private IEnumerator Start()
+        private GameObject _parent;
+        
+        void IStartListener.StartGame()
         {
-            while (_heroEntity!=null)
+            _parent = new GameObject("Enemies");
+            TargetState();
+            StartCoroutine(Spawn());
+        }
+        private IEnumerator Spawn()
+        {
+            while (TargetState())
             {
-                var enemy =  Instantiate(_enemy, _spawnPoints[Random.Range(0, _spawnPoints.Length)].position, 
-                    quaternion.identity);
-                AddDependencies(enemy);
-                yield return new WaitForSeconds(_delay);
+                var spawnEntity =  Instantiate(_enemy, _spawnPoints[Random.Range(0, _spawnPoints.Length)]
+                    .position,Quaternion.identity);
+                
+                spawnEntity.transform.parent = _parent.transform;
+                
+                AddTarget(spawnEntity);
+                
+                OnEnemyCreated?.Invoke(spawnEntity);
+                
+                yield return new WaitForSeconds(_delaySpawn);
             }
         }
-
-
-        private void AddDependencies(ZombieModel zombie)
+        
+        private void AddTarget(Entity.Entity enemy)
         {
-            var core = zombie.Core;
-            core.ZombieChase.Target = _heroEntity;
-            core.AttackHero.AttackTarget = _heroEntity;
+            if(enemy.TryGet(out ISetEntityTargetComponent setEntityComp))
+                setEntityComp.SetEntityTarget(_targetEntity);
+            else
+                throw new NullReferenceException();
         }
+
+        private bool TargetState()
+        {
+           return _targetEntity != null; 
+        }
+    }
+
+    public interface IEnemyFactory<T>
+    {
+       event Action<T> OnEnemyCreated;
     }
 }

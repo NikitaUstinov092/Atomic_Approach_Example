@@ -3,12 +3,12 @@ using UnityEngine;
 
 namespace GamePlay.Custom.Input
 {
-    public class RotationInput : MonoBehaviour
+    public class RotationInput : MonoBehaviour, IUpdateListener
     {
         [SerializeField]
         private HeroModel _hero;
 
-        private void Update()
+        void IUpdateListener.Update()
         {
             var screenPos = UnityEngine.Input.mousePosition;
             _hero.Core.rotate.RotateDirection.Value = screenPos;

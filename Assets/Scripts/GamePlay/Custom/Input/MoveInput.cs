@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace GamePlay.Custom.Input
 {
-    public sealed class MoveInput : MonoBehaviour
+    public sealed class MoveInput : MonoBehaviour, IUpdateListener
     {
         [SerializeField]
         private Entity.Entity _entity;
@@ -22,7 +22,7 @@ namespace GamePlay.Custom.Input
 
         private Vector3 _direction;
         
-        private void Update()
+        void IUpdateListener.Update()
         {
             if (UnityEngine.Input.GetKey(_leftKey))
             {

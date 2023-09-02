@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Declarative.Scripts.Attributes;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UpdateMechanics;
 
 namespace GamePlay.Zombie
@@ -16,39 +17,40 @@ namespace GamePlay.Zombie
         private const int DEATH_STATE = 4;
         
         [SerializeField]
-        public Animator animator;
+        public Animator Animator;
         
-        private readonly LateUpdateMechanics lateUpdate = new();
+        private readonly LateUpdateMechanics _lateUpdate = new();
 
         [Construct]
         public void Construct(ZombieModel_Core core)
         {
-            var isDeath = core.life.IsDead;
+            var isDeath = core.Life.IsDead;
             var isChasing = core.ZombieChase.IsChasing;
             var stopAttack = core.AttackHero.StopAttack;
+            var distanceChecker = core.TargetDistance;
             
-            lateUpdate.Construct(_ =>
+            _lateUpdate.Construct(_ =>
             {
                 if (isDeath.Value)
                 {
-                    animator.SetInteger(State, DEATH_STATE);
+                    Animator.SetInteger(State, DEATH_STATE);
                     return;
                 }
 
-                if (stopAttack.Value)
+                if (stopAttack.Value || !distanceChecker.Target.Value)
                 {
-                    animator.SetInteger(State, IDLE_STATE);
+                    Animator.SetInteger(State, IDLE_STATE);
                     return;
                 }
                 
                 switch (isChasing.Value)
                 {
                     case true:
-                        animator.SetInteger(State, MOVE_STATE);
+                        Animator.SetInteger(State, MOVE_STATE);
                         break;
                     
                     case false:
-                        animator.SetInteger(State, ATTACK_STATE);
+                        Animator.SetInteger(State, ATTACK_STATE);
                         break;
                 }
             });

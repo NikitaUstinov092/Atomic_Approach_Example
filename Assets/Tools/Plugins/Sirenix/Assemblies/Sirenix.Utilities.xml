@@ -2696,7 +2696,7 @@
         </member>
         <member name="M:Sirenix.Utilities.MathUtilities.PointDistanceToLine(UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3)">
             <summary>
-            Distance from a point to a line.
+            TargetDistance from a point to a line.
             </summary>
         </member>
         <member name="M:Sirenix.Utilities.MathUtilities.Hermite(System.Single,System.Single,System.Single)">
@@ -2868,7 +2868,7 @@
         </member>
         <member name="M:Sirenix.Utilities.MathUtilities.LineDistToPlane(UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3)">
             <summary>
-            Distance from line to plane.
+            TargetDistance from line to plane.
             </summary>
             <param name="planeOrigin">Position of the plane.</param>
             <param name="planeNormal">Surface normal of the plane.</param>
@@ -2877,7 +2877,7 @@
         </member>
         <member name="M:Sirenix.Utilities.MathUtilities.RayDistToPlane(UnityEngine.Ray,UnityEngine.Plane)">
             <summary>
-            Distance from ray to plane.
+            TargetDistance from ray to plane.
             </summary>
             <param name="ray">The ray.</param>
             <param name="plane">The plane.</param>

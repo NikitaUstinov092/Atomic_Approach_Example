@@ -2840,7 +2840,7 @@
             {
             	// The life value must be set to at least 1.
             	[MinValue(1)]
-            	public int Life;
+            	public int life;
             }
             </code>
             </example>

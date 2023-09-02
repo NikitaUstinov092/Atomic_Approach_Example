@@ -32,9 +32,9 @@ namespace System.Declarative.Scripts
 
         private void Awake()
         {
-            this.monoContext = new MonoContext(this);
-            this.disposables = new List<IDisposable>();
-            this.sections = SectionScanner.ScanSections(this);
+            monoContext = new MonoContext(this);
+            disposables = new List<IDisposable>();
+            sections = SectionScanner.ScanSections(this);
 
             foreach (var section in this.sections.Values)
             {
@@ -42,8 +42,8 @@ namespace System.Declarative.Scripts
                 SectionConstructor.ConstructSection(section, this);
             }
 
-            this.monoContext.Awake();
-            this.onAwake?.Invoke();
+            monoContext.Awake();
+            onAwake?.Invoke();
         }
 
         private void OnEnable()

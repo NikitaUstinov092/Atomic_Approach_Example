@@ -2,6 +2,7 @@ using System.Declarative.Scripts;
 using System.Declarative.Scripts.Attributes;
 using UnityEngine;
 
+
 namespace GamePlay.Zombie
 {
     public class ZombieModel : DeclarativeModel

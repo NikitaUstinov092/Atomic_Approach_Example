@@ -1,23 +1,18 @@
 using GamePlay.Hero;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace GamePlay.Custom.Input
 {
-   public class ShootInput : MonoBehaviour
+   public class ShootInput : MonoBehaviour, IUpdateListener
    {
       [SerializeField]
       private HeroModel _heroModel;
 
-      private void Update()
+      void IUpdateListener.Update()
       {
          if (UnityEngine.Input.GetMouseButtonDown(0))
-         {
             OnPressed();
-         }
       }
-
-      [Button]
       private void OnPressed()
       {
          _heroModel.Core.shoot.OnGetPressedFire.Invoke();

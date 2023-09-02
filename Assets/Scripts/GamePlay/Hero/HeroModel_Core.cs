@@ -35,7 +35,7 @@ using Object = UnityEngine.Object;
             public EntityContainer EntityStorage = new();
         
             [Serializable]
-            public sealed class Life
+            public class Life
             {
                 [ShowInInspector]
                 public AtomicEvent<int> OnTakeDamage = new();
