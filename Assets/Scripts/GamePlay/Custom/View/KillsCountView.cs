@@ -1,18 +1,26 @@
-using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using Zenject;
 
-public class KillsCountView : MonoBehaviour
+public class KillsCountView : MonoBehaviour, IInitListener, IDisableListener
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField]
+    private TextMeshProUGUI _text;
+    
+    [Inject]
+    private IKillCounterPM _pm;
+    
+    private const string TITLE = "KILLS: ";
+    void IInitListener.OnInit()
     {
-        
+        _pm.OnValueChanged += UpdateGUI;
     }
-
-    // Update is called once per frame
-    void Update()
+    void IDisableListener.Disable()
     {
-        
+        _pm.OnValueChanged -= UpdateGUI;
+    }
+    private void UpdateGUI(int kills)
+    {
+        _text.text = TITLE + kills;
     }
 }

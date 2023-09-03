@@ -9,7 +9,9 @@ public class SceneInstaller : MonoInstaller<SceneInstaller>
     {
         Container.Bind<HeroEntity>().FromComponentsInHierarchy().AsSingle();
         Container.BindInterfacesAndSelfTo<EnemyFactory>().FromComponentsInHierarchy().AsSingle();
+        Container.BindInterfacesAndSelfTo<EnemyCleaner>().FromComponentsInHierarchy().AsSingle();
         Container.BindInterfacesTo<KillsCounter<Entity.Entity>>().AsSingle();
+        Container.BindInterfacesTo<KillsCountView>().FromComponentsInHierarchy().AsSingle();
         Container.BindInterfacesTo<MoveInput>().FromComponentsInHierarchy().AsSingle();
         Container.BindInterfacesTo<RotationInput>().FromComponentsInHierarchy().AsSingle();
         Container.BindInterfacesTo<ShootInput>().FromComponentsInHierarchy().AsSingle();

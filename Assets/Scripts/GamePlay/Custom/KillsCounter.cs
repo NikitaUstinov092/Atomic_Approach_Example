@@ -5,7 +5,7 @@ using GamePlay.Hero;
 using UnityEngine;
 using Zenject;
 
-public class KillsCounter<T>: IStartListener, IDisableListener, IKillCounterPM where T: Entity.Entity
+public class KillsCounter<T>: IInitListener, IStartListener, IDisableListener, IKillCounterPM where T: Entity.Entity
 {
     public event Action<int> OnValueChanged;
     
@@ -14,9 +14,14 @@ public class KillsCounter<T>: IStartListener, IDisableListener, IKillCounterPM w
     
     private T _enemy;
     private int _deathCount;
-    void IStartListener.StartGame()
+    void IInitListener.OnInit()
     {
         _enemyFactory.OnEnemyCreated += CheckLifeComponent;
+       
+    }
+    void IStartListener.StartGame()
+    {
+        OnValueChanged?.Invoke(0);
     }
     void IDisableListener.Disable()
     {
@@ -39,7 +44,7 @@ public class KillsCounter<T>: IStartListener, IDisableListener, IKillCounterPM w
     
     private void CountDeath()
     {
-       OnValueChanged?.Invoke(++_deathCount);
+        OnValueChanged?.Invoke(++_deathCount);
     }
 }
 

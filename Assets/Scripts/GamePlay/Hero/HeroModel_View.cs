@@ -20,6 +20,10 @@ using Vector3 = UnityEngine.Vector3;
             [SerializeField]
             public HP_View HpView = new();
 
+            [Section] 
+            [SerializeField] 
+            public Ammo_View AmmoView = new();
+
             [Serializable]
             public sealed class HeroAnimation_View
             {
@@ -40,8 +44,8 @@ using Vector3 = UnityEngine.Vector3;
                 public void Construct(HeroModel_Core core)
                 {
                     var isDeath = core.life.IsDead;
-                    var moveRequired = core.move.moveRequired;
-                    var inputVector = core.move.onMove;
+                    var moveRequired = core.move.MoveRequired;
+                    var inputVector = core.move.OnMove;
             
                     lateUpdate.Construct(_ =>
                     {
@@ -90,15 +94,34 @@ using Vector3 = UnityEngine.Vector3;
             [Serializable]
             public sealed class HP_View
             {
-                [SerializeField] 
-                public AtomicVariable<string> Title;
-            
-                [SerializeField] 
-                public AtomicVariable<TextMeshProUGUI> TextHp;
+                public AtomicVariable<TextMeshProUGUI> TextHp = new ();
+                
+                private const string Title = "HIT POINTS: ";
+                
+                [Construct]
                 public void Construct(HeroModel_Core core)
                 {
-                    var onTakeDamage = core.life.OnTakeDamage;
+                    var hitPoints = core.life.HitPoints;
+                    TextHp.Value.text = Title + hitPoints.Value;
+                    hitPoints.Subscribe((newValue) => TextHp.Value.text = Title + newValue);
+                }
+            }
+            
+            
+            [Serializable]
+            public sealed class Ammo_View
+            {
+                public AtomicVariable<TextMeshProUGUI> TextAmmo = new ();
                 
+                private const string Title = "BULLETS: ";
+                
+                [Construct]
+                public void Construct(HeroModel_Core core)
+                {
+                    var hitPoints = core.ammo.AmmoCount;
+                    var maxValue = "/" + core.ammo.MaxAmmo.Value;
+                    TextAmmo.Value.text = Title + hitPoints.Value + maxValue;
+                    hitPoints.Subscribe((newValue) => TextAmmo.Value.text = Title + newValue + maxValue);
                 }
             }
         }

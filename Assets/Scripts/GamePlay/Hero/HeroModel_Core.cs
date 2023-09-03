@@ -5,10 +5,9 @@ using GamePlay.Custom;
 using GamePlay.Custom.ScriptableObjects;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UpdateMechanics;
 using Object = UnityEngine.Object;
-
-
     namespace GamePlay.Hero
     {
         [Serializable]
@@ -29,6 +28,10 @@ using Object = UnityEngine.Object;
             [Section]
             [SerializeField]
             public Shoot shoot = new();
+            
+            [Section]
+            [SerializeField]
+            public Ammo ammo = new();
         
             [Section]
             [SerializeField]
@@ -37,17 +40,10 @@ using Object = UnityEngine.Object;
             [Serializable]
             public class Life
             {
-                [ShowInInspector]
                 public AtomicEvent<int> OnTakeDamage = new();
-            
-                [ShowInInspector]
                 public AtomicEvent OnDeath = new();
-
-                [SerializeField]
                 public AtomicVariable<int> HitPoints = new();
-
-                [SerializeField]
-                public AtomicVariable<bool> IsDead;
+                public AtomicVariable<bool> IsDead= new();
             
                 [Construct]
                 public void Construct()
@@ -56,135 +52,201 @@ using Object = UnityEngine.Object;
                     {
                         if (IsDead.Value)
                             return;
+                        
                         HitPoints.Value -= damage;
-                    });
-                
-                    HitPoints.onChanged += hitPoints =>
-                    {
-                        if (hitPoints > 0) 
+
+                        if (HitPoints.Value != 0)
                             return;
+                       
                         IsDead.Value = true;
                         OnDeath?.Invoke();
-                    };
+                    });
                 }
             }
 
             [Serializable]
             public class Move
             {
-                [SerializeField]
-                public Transform moveTransform;
-          
                 [ShowInInspector]
-                public AtomicEvent<Vector3> onMove = new(); 
-            
-                private AtomicVariable<Vector3> moveDirection = new();
+                public AtomicEvent<Vector3> OnMove = new();
+                
+                public AtomicVariable<float> Speed = new();
+                public AtomicVariable<bool> MoveRequired = new ();
 
+                private readonly FixedUpdateMechanics _fixedUpdate = new();
+                
                 [SerializeField]
-                public AtomicVariable<bool> moveRequired = new();
-            
-                [SerializeField]
-                public AtomicVariable<float> speed = new();
-
-                private readonly FixedUpdateMechanics fixedUpdate = new();
-
+                private Transform _moveTransform;
+                
+                private Vector3 _moveDirection;
+                
                 [Construct]
                 public void Construct(Life life)
                 {
                     var isDeath = life.IsDead;
-                    onMove.Subscribe(direction =>
+                    
+                    OnMove.Subscribe(direction =>
                     {
-                        moveDirection.Value = (moveTransform.forward * direction.z + moveTransform.right * direction.x)
+                        if(isDeath.Value)
+                            return;
+                        _moveDirection = (_moveTransform.forward * direction.z + _moveTransform.right * direction.x)
                             .normalized;
-                        moveRequired.Value = true;
+                        MoveRequired.Value = true;
                     });
 
-                    fixedUpdate.Construct(deltaTime =>
+                    _fixedUpdate.Construct(deltaTime =>
                     {
-                        if (!moveRequired.Value || isDeath.Value) 
+                        if (!MoveRequired.Value || isDeath.Value) 
                             return;
                     
-                        moveTransform.position += moveDirection.Value * (speed.Value * deltaTime);
-                        moveRequired.Value = false;
+                        _moveTransform.position += _moveDirection * (Speed.Value * deltaTime);
+                        MoveRequired.Value = false;
                     });
                 }
             }
             [Serializable]
             public sealed class Rotate
-            { 
-                [SerializeField]
-                public Camera PlayerCamera;
-            
-                [SerializeField]
-                public Transform PlayerTransform;
-            
-                public RotationEngine RotationMotor = new();
-            
+            {
                 public AtomicVariable<Vector3> RotateDirection;
             
                 public AtomicVariable<float> RotationSpeed;
            
-                private readonly FixedUpdateMechanics fixedUpdate = new();
+                [SerializeField]
+                private Camera _playerCamera;
+                
+                [SerializeField]
+                private Transform _playerTransform;
+                
+                private readonly FixedUpdateMechanics _fixedUpdate = new();
+                private RotationEngine _rotationMotor = new();
 
                 [Construct]
                 public void Construct(Life life)
                 {
                     var isDeath = life.IsDead;
 
-                    RotationMotor.Construct(PlayerTransform, PlayerCamera, RotationSpeed.Value);
+                    _rotationMotor.Construct(_playerTransform, _playerCamera, RotationSpeed.Value);
                 
-                    fixedUpdate.Construct(_ =>
+                    _fixedUpdate.Construct(_ =>
                     {
                         if(isDeath.Value)
                             return;
                     
                         var cursorScreenPos = RotateDirection.Value;
-                        RotationMotor.UpdateRotation(cursorScreenPos);
+                        _rotationMotor.UpdateRotation(cursorScreenPos);
                     });
-
                 }
             }
 
             [Serializable]
             public sealed class Shoot
             {
-                public ShootEngine ShootEngine;
-                public BulletConfig BulletConfig;
-                public Transform SpawnPointShoot;
                 public AtomicEvent OnGetPressedFire = new();
-                private readonly FixedUpdateMechanics fixedUpdate = new();
-
+                public AtomicEvent OnBulletCreated = new();
+                
+                public AtomicVariable<BulletConfig> BulletConfig = new();
+                public AtomicVariable<float> CoolDown = new();
+                
+                [SerializeField]
+                private ShootEngine _shootEngine;
+                
+                [SerializeField]
+                private Transform _spawnPointShoot;
+                
+                private readonly FixedUpdateMechanics _fixedUpdate = new();
+                
+                private bool _canShoot = true;
+                private bool _coolDown;
+                private float _timer;
+                
                 [Construct]
-                public void Construct(Move move, Life life)
+                public void Construct(Ammo ammo, Life life)
                 {
-                    ShootEngine.Construct(BulletConfig, SpawnPointShoot);
+                    _shootEngine.Construct(BulletConfig.Value, _spawnPointShoot);
                 
                     var isDead = life.IsDead;
+                    var ammoCount = ammo.AmmoCount;
+                    
+                    isDead.Subscribe((data) => _canShoot = !data);
+                    ammoCount.Subscribe((count) => _canShoot = (count > 0));
+
+                    if (ammoCount.Value <= 0)
+                        _canShoot = false;
                 
                     OnGetPressedFire.Subscribe(() =>
                     {
-                        if(isDead.Value)
+                        if(!_canShoot || _coolDown)
                             return;
                     
-                        ShootEngine.CreateBullet();
+                        _coolDown = true;
+                        _shootEngine.CreateBullet();
+                        OnBulletCreated?.Invoke();
                     });
                 
-                    fixedUpdate.Construct(deltaTime => //TO DO убрать внутрь класса ShootEngine или вынести в отдельный класс 
+                    _fixedUpdate.Construct(deltaTime => 
                     {
-                        if(isDead.Value)
+                        if(!_canShoot || !_coolDown)
                             return;
-                    
-                        ShootEngine.Cooldown();
+                        
+                        _timer += deltaTime;
+
+                        if (_timer <= CoolDown.Value || !_canShoot) 
+                            return;
+                        
+                        _timer = 0;
+                        _coolDown = false;
                     }); 
                 }
             }
         
+            [Serializable]
             public sealed class Ammo
             {
-            
-            
+                public AtomicVariable<int> AmmoCount = new();
+                public AtomicVariable<int> MaxAmmo = new ();
+                public AtomicVariable<float> ReloadTime = new ();
+                
+                private readonly FixedUpdateMechanics _fixedUpdate = new();
+                
+                private bool _reloadRequired;
+                private bool _canReload = true;
+                private float _timer;
+                
+                [Construct]
+                public void Construct(Shoot shootComp, Life lifeComp)
+                {
+                    var isDead = lifeComp.IsDead;
+                    var shoot = shootComp.OnBulletCreated;
+                    
+                    isDead.Subscribe((data) => _canReload = !data);
+                    
+                    AmmoCount.Subscribe(count => _reloadRequired = count < MaxAmmo.Value);
+
+                    if (AmmoCount.Value < MaxAmmo.Value)
+                        _reloadRequired = true;
+                    
+                    shoot.Subscribe(() =>
+                    {
+                        if(AmmoCount.Value <= 0 || !_canReload)
+                            return;
+                        AmmoCount.Value--;
+                    });
+                    
+                    _fixedUpdate.Construct(deltaTime => 
+                    {
+                        if(!_reloadRequired || !_canReload)
+                            return;
+                    
+                        _timer += deltaTime;
+
+                        if (_timer <= ReloadTime.Value || !_canReload) 
+                            return;
+                        
+                        AmmoCount.Value++;
+                        _timer = 0;
+                    }); 
+                }
             }
-        
 
             [Serializable]
             public sealed class EntityContainer
@@ -199,8 +261,6 @@ using Object = UnityEngine.Object;
                         Object.Destroy(Entity);
                     });
                 }
-            
             }
-        
         }
     }

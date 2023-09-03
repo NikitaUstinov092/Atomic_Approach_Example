@@ -520,7 +520,7 @@ MonoBehaviour:
       Target:
         value: {fileID: 0}
       DistanceTarget:
-        value: 2
+        value: 1
       ClosedTarget:
         value: 0
     AttackHero:

@@ -23,7 +23,7 @@ namespace GamePlay.Custom
         private float _delaySpawn = 2;
 
         private GameObject _parent;
-        
+
         void IStartListener.StartGame()
         {
             _parent = new GameObject("Enemies");

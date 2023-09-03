@@ -33,6 +33,7 @@ using Random = UnityEngine.Random;
             {
                 [SerializeField]
                 public Transform MoveTransform;
+                
                 public AtomicVariable<float> MinSpeed = new();
                 public AtomicVariable<float> MaxSpeed = new();
                 public AtomicVariable<bool> IsChasing = new();
@@ -116,7 +117,7 @@ using Random = UnityEngine.Random;
 
                         _timer += deltaTime;
                         
-                        if (!(_timer >= AttackDelay.Value)) 
+                        if (!(_timer >= AttackDelay.Value || life.IsDead.Value)) 
                             return;
                         
                         if (targetDistanceChecker.Target.Value != null && 
