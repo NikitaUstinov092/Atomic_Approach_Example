@@ -728,7 +728,7 @@ MonoBehaviour:
   - {fileID: 627607968}
   - {fileID: 1937482824}
   - {fileID: 450896429}
-  _delaySpawn: 2000
+  _delaySpawn: 2
 --- !u!1 &498802396
 GameObject:
   m_ObjectHideFlags: 0

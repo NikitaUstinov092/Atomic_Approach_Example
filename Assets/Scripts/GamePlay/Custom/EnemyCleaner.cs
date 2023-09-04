@@ -14,12 +14,12 @@ public class EnemyCleaner: MonoBehaviour, IInitListener, IDisableListener
 
     void IInitListener.OnInit()
     {
-        _enemyFactory.OnEnemyCreated += HandleEnemyCreated;
+       // _enemyFactory.OnEnemyCreated += HandleEnemyCreated;
     }
 
     void IDisableListener.Disable()
     {
-        _enemyFactory.OnEnemyCreated -= HandleEnemyCreated;
+       // _enemyFactory.OnEnemyCreated -= HandleEnemyCreated;
     }
 
     private void HandleEnemyCreated(Entity.Entity enemy)

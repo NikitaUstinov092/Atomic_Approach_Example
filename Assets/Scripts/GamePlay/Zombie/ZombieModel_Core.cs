@@ -105,16 +105,18 @@ using Random = UnityEngine.Random;
                 [Construct]
                 public void Construct(TargetDistanceChecker targetDistanceChecker, HeroModel_Core.Life life)
                 {
+                    var target =  targetDistanceChecker.Target;
+                    target.Subscribe((entity) => StopAttack.Value = entity == null);
+                    life.IsDead.Subscribe((dead) => StopAttack.Value = dead);
+                    
                     _lateUpdate.Construct(deltaTime=>
                     {
-                        StopAttack.Value = targetDistanceChecker.Target.Value == null && life.IsDead.Value;
-                       
                         if(StopAttack.Value)
                             return;
-                    
+                       
                         if (!targetDistanceChecker.ClosedTarget.Value)
                             return;
-
+                      
                         _timer += deltaTime;
                         
                         if (!(_timer >= AttackDelay.Value || life.IsDead.Value)) 
