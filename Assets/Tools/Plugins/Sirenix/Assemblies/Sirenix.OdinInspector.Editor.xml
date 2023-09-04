@@ -8264,8 +8264,8 @@
             Note that this feature becomes pointless if any layout group expands vertically.
             </summary>
             <param name="maxHeight">The max height of the window.</param>
-            <param name="retainInitialWindowPosition">When the window height expands below the screen bounds, it will move the window 
-            upwards when needed, enabling this will move it back down when the window height is decreased. </param>
+            <param name="retainInitialWindowPosition">When the window height expands below the screen bounds, it will MoveComp the window 
+            upwards when needed, enabling this will MoveComp it back down when the window height is decreased. </param>
         </member>
         <member name="M:Sirenix.OdinInspector.Editor.OdinEditorWindow.InspectObjectInDropDown(System.Object,UnityEngine.Rect,UnityEngine.Vector2)">
             <summary>

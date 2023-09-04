@@ -2,6 +2,7 @@ using System;
 using System.Atomic.Implementations;
 using System.Declarative.Scripts.Attributes;
 using GamePlay.Custom;
+using GamePlay.Custom.Engines;
 using GamePlay.Custom.ScriptableObjects;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -15,27 +16,27 @@ using Object = UnityEngine.Object;
         {
             [Section]
             [SerializeField]
-            public Life life = new();
-
-            [Section]
-            [SerializeField]
-            public Move move = new();
-        
-            [Section]
-            [SerializeField]
-            public Rotate rotate = new();
-        
-            [Section]
-            [SerializeField]
-            public Shoot shoot = new();
+            public Life LifeComp = new();
             
             [Section]
             [SerializeField]
-            public Ammo ammo = new();
-        
+            public Move MoveComp = new();
+            
             [Section]
             [SerializeField]
-            public EntityContainer EntityStorage = new();
+            public Rotate RotateComp = new();
+            
+            [Section]
+            [SerializeField]
+            public Shoot ShootComp = new();
+            
+            [Section]
+            [SerializeField]
+            public Ammo AmmoComp = new();
+            
+            [Section]
+            [SerializeField]
+            public EntityContainer EntityStorageComp = new();
         
             [Serializable]
             public class Life
@@ -89,6 +90,7 @@ using Object = UnityEngine.Object;
                     {
                         if(isDeath.Value)
                             return;
+                        
                         _moveDirection = (_moveTransform.forward * direction.z + _moveTransform.right * direction.x)
                             .normalized;
                         MoveRequired.Value = true;
@@ -107,7 +109,7 @@ using Object = UnityEngine.Object;
             [Serializable]
             public sealed class Rotate
             {
-                public AtomicVariable<Vector3> RotateDirection;
+                public AtomicVariable<Vector3> RotationDirection;
             
                 public AtomicVariable<float> RotationSpeed;
            
@@ -132,7 +134,7 @@ using Object = UnityEngine.Object;
                         if(isDeath.Value)
                             return;
                     
-                        var cursorScreenPos = RotateDirection.Value;
+                        var cursorScreenPos = RotationDirection.Value;
                         _rotationMotor.UpdateRotation(cursorScreenPos);
                     });
                 }

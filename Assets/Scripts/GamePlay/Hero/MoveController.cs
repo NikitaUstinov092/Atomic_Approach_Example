@@ -9,7 +9,7 @@ namespace GamePlay.Hero
 
         private void Update()
         {
-            var onMove = this.hero.Core.move.OnMove;
+            var onMove = this.hero.Core.MoveComp.OnMove;
             
             if (Input.GetKey(KeyCode.LeftArrow))
             {

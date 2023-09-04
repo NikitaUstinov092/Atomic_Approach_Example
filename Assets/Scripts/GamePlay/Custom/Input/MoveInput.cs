@@ -1,4 +1,5 @@
 ﻿using GamePlay.Components.Interfaces;
+using GamePlay.Custom.GameMachine;
 using UnityEngine;
 
 namespace GamePlay.Custom.Input
@@ -7,19 +8,16 @@ namespace GamePlay.Custom.Input
     {
         [SerializeField]
         private Entity.Entity _entity;
-
+        
         [SerializeField] 
         private KeyCode _leftKey;
-
         [SerializeField] 
         private KeyCode _rightKey;
-
         [SerializeField] 
         private KeyCode _forwardKey;
-
         [SerializeField] 
         private KeyCode _backKey;
-
+        
         private Vector3 _direction;
         
         void IUpdateListener.Update()
@@ -48,10 +46,10 @@ namespace GamePlay.Custom.Input
 
         private void ApplyMove(Vector3 direction)
         {
-            if (_entity.TryGet(out IMoveable moveComponent))
-            {
-                moveComponent.Move(direction);
-            }
+            if (!_entity.TryGet(out IMoveable moveComponent))
+                return;
+            
+            moveComponent.Move(direction);
         }
     }
 }

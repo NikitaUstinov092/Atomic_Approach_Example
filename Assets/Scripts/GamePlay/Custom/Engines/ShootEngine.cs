@@ -2,7 +2,7 @@
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace GamePlay.Custom
+namespace GamePlay.Custom.Engines
 {
     public class ShootEngine: MonoBehaviour
     {

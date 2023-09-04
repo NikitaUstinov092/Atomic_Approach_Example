@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace GamePlay.Custom
+namespace GamePlay.Custom.Engines
 {
     public class RotationEngine
     {

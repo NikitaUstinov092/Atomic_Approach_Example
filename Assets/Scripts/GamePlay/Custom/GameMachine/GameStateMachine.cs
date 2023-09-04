@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
+namespace GamePlay.Custom.GameMachine
+{
     public class GameStateMachine : MonoBehaviour
     {
         [Inject]
@@ -51,3 +53,4 @@ using Zenject;
             }
         }
     }
+}

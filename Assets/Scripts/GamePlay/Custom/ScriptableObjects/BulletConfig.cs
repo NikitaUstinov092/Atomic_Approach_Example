@@ -7,6 +7,5 @@ namespace GamePlay.Custom.ScriptableObjects
     {
         public Rigidbody Bullet;
         public float SpeedShoot;
-        public float CoolDown;
     }
 }

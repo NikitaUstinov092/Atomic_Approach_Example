@@ -379,7 +379,7 @@
         </member>
         <member name="P:Sirenix.Utilities.Editor.EditorIcons.Move">
             <summary>
-            Gets an icon of a move symbol.
+            Gets an icon of a MoveComp symbol.
             </summary>
         </member>
         <member name="P:Sirenix.Utilities.Editor.EditorIcons.MultiUser">
@@ -459,7 +459,7 @@
         </member>
         <member name="P:Sirenix.Utilities.Editor.EditorIcons.Rotate">
             <summary>
-            Gets an icon of a rotate symbol.
+            Gets an icon of a RotateComp symbol.
             </summary>
         </member>
         <member name="P:Sirenix.Utilities.Editor.EditorIcons.Ruler">
@@ -1479,7 +1479,7 @@
             </summary>
             <param name="current">The <see cref="T:UnityEngine.Event"/>.</param>
             <param name="useEvent">If <c>true</c> then the method will call <see cref="M:UnityEngine.Event.Use"/> on the event.</param>
-            <returns><c>true</c> on mouse move or mouse drag events. Otherwise <c>false</c>.</returns>
+            <returns><c>true</c> on mouse MoveComp or mouse drag events. Otherwise <c>false</c>.</returns>
         </member>
         <member name="M:Sirenix.Utilities.Editor.EventExtensions.IsHovering(UnityEngine.Event,UnityEngine.Rect)">
             <summary>

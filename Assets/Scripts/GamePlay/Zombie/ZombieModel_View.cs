@@ -29,13 +29,12 @@ namespace GamePlay.Zombie
             var stopAttack = core.AttackHero.StopAttack;
             var distanceChecker = core.TargetDistance;
             
+            isDeath.Subscribe((state)=>  Animator.SetInteger(State, DEATH_STATE));
+            
             _lateUpdate.Construct(_ =>
             {
                 if (isDeath.Value)
-                {
-                    Animator.SetInteger(State, DEATH_STATE);
                     return;
-                }
 
                 if (stopAttack.Value || !distanceChecker.Target.Value)
                 {

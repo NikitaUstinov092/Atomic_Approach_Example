@@ -1,7 +1,10 @@
 using UnityEngine;
 
-public interface IRotatable 
+namespace GamePlay.Components.Interfaces
 {
-    void RotateInDirection(Vector3 direction);
+    public interface IRotatable 
+    {
+        void RotateInDirection(Vector3 direction);
+    }
 }
 

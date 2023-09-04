@@ -1114,7 +1114,7 @@
             Moves a Rect's position by the specified amount.
             </summary>
             <param name="rect">The original Rect.</param>
-            <param name="move">The change in position.</param>
+            <param name="MoveComp">The change in position.</param>
         </member>
         <member name="M:Sirenix.Utilities.RectExtensions.AddPosition(UnityEngine.Rect,System.Single,System.Single)">
             <summary>
@@ -2886,16 +2886,16 @@
             <summary>
             Rotates a Vector2 by an angle.
             </summary>
-            <param name="point">The point to rotate.</param>
-            <param name="degrees">The angle to rotate.</param>
+            <param name="point">The point to RotateComp.</param>
+            <param name="degrees">The angle to RotateComp.</param>
         </member>
         <member name="M:Sirenix.Utilities.MathUtilities.RotatePoint(UnityEngine.Vector2,UnityEngine.Vector2,System.Single)">
             <summary>
             Rotates a Vector2 around a point by an angle..
             </summary>
-            <param name="point">The point to rotate.</param>
-            <param name="around">The point to rotate around.</param>
-            <param name="degrees">The angle to rotate.</param>
+            <param name="point">The point to RotateComp.</param>
+            <param name="around">The point to RotateComp around.</param>
+            <param name="degrees">The angle to RotateComp.</param>
         </member>
         <member name="M:Sirenix.Utilities.MathUtilities.SmoothStep(System.Single,System.Single,System.Single)">
             <summary>

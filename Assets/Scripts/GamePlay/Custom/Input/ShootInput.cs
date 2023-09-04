@@ -1,3 +1,4 @@
+using GamePlay.Custom.GameMachine;
 using GamePlay.Hero;
 using UnityEngine;
 
@@ -15,7 +16,7 @@ namespace GamePlay.Custom.Input
       }
       private void OnPressed()
       {
-         _heroModel.Core.shoot.OnGetPressedFire.Invoke();
+         _heroModel.Core.ShootComp.OnGetPressedFire.Invoke();
       }
    }
 }

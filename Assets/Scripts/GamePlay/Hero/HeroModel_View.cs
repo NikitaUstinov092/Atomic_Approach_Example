@@ -3,9 +3,9 @@ using System.Atomic.Implementations;
 using System.Declarative.Scripts.Attributes;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UpdateMechanics;
 using Vector3 = UnityEngine.Vector3;
-
 
     namespace GamePlay.Hero
     {
@@ -14,7 +14,7 @@ using Vector3 = UnityEngine.Vector3;
         {
             [Section]
             [SerializeField]
-            public HeroAnimation_View HeroAnimationView = new();
+            public HeroAnimation_View AnimationView = new();
         
             [Section]
             [SerializeField]
@@ -28,6 +28,7 @@ using Vector3 = UnityEngine.Vector3;
             public sealed class HeroAnimation_View
             {
                 private static readonly int State = Animator.StringToHash("State");
+                
                 private const int IDLE_STATE = 0;
                 private const int MOVE_STATE_FRONT = 1;
                 private const int MOVE_STATE_RIGHT = 2;
@@ -43,17 +44,16 @@ using Vector3 = UnityEngine.Vector3;
                 [Construct]
                 public void Construct(HeroModel_Core core)
                 {
-                    var isDeath = core.life.IsDead;
-                    var moveRequired = core.move.MoveRequired;
-                    var inputVector = core.move.OnMove;
+                    var isDeath = core.LifeComp.IsDead;
+                    var moveRequired = core.MoveComp.MoveRequired;
+                    var inputVector = core.MoveComp.OnMove;
+                    
+                    isDeath.Subscribe((data) => animator.SetInteger(State, DEATH_STATE));
             
                     lateUpdate.Construct(_ =>
                     {
                         if (isDeath.Value)
-                        {
-                            animator.SetInteger(State, DEATH_STATE);
                             return;
-                        }
                 
                         if (!moveRequired.Value)
                         {
@@ -65,7 +65,6 @@ using Vector3 = UnityEngine.Vector3;
                         {
                             if (isDeath.Value)
                                 return;
-                    
                             if (direction == Vector3.forward)
                             {
                                 animator.SetInteger(State, MOVE_STATE_FRONT);
@@ -81,7 +80,6 @@ using Vector3 = UnityEngine.Vector3;
                                 animator.SetInteger(State, MOVE_STATE_LEFT);
                                 return;
                             }
-                    
                             if (direction  == Vector3.right)
                             {
                                 animator.SetInteger(State, MOVE_STATE_RIGHT);
@@ -101,7 +99,7 @@ using Vector3 = UnityEngine.Vector3;
                 [Construct]
                 public void Construct(HeroModel_Core core)
                 {
-                    var hitPoints = core.life.HitPoints;
+                    var hitPoints = core.LifeComp.HitPoints;
                     TextHp.Value.text = Title + hitPoints.Value;
                     hitPoints.Subscribe((newValue) => TextHp.Value.text = Title + newValue);
                 }
@@ -118,8 +116,8 @@ using Vector3 = UnityEngine.Vector3;
                 [Construct]
                 public void Construct(HeroModel_Core core)
                 {
-                    var hitPoints = core.ammo.AmmoCount;
-                    var maxValue = "/" + core.ammo.MaxAmmo.Value;
+                    var hitPoints = core.AmmoComp.AmmoCount;
+                    var maxValue = "/" + core.AmmoComp.MaxAmmo.Value;
                     TextAmmo.Value.text = Title + hitPoints.Value + maxValue;
                     hitPoints.Subscribe((newValue) => TextAmmo.Value.text = Title + newValue + maxValue);
                 }

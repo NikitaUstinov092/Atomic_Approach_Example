@@ -10,10 +10,10 @@ namespace Entity
         private HeroModel model;
         private void Awake()
         {
-            Add(new MoveComponent(model.Core.move.OnMove));
-            Add(new TakeDamageComponent(model.Core.life.OnTakeDamage));
-            Add(new RotateComponent(model.Core.rotate.RotateDirection));
-            Add(new LifeComponent(model.Core.life));
+            Add(new MoveComponent(model.Core.MoveComp.OnMove));
+            Add(new TakeDamageComponent(model.Core.LifeComp.OnTakeDamage));
+            Add(new RotateComponent(model.Core.RotateComp.RotationDirection));
+            Add(new LifeComponent(model.Core.LifeComp));
         }
     }
 }

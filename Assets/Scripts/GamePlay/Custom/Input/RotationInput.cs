@@ -1,3 +1,4 @@
+using GamePlay.Custom.GameMachine;
 using GamePlay.Hero;
 using UnityEngine;
 
@@ -11,7 +12,7 @@ namespace GamePlay.Custom.Input
         void IUpdateListener.Update()
         {
             var screenPos = UnityEngine.Input.mousePosition;
-            _hero.Core.rotate.RotateDirection.Value = screenPos;
+            _hero.Core.RotateComp.RotationDirection.Value = screenPos;
         }
     }
 }
