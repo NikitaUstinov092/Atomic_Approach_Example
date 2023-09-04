@@ -38,9 +38,7 @@ using Vector3 = UnityEngine.Vector3;
             
                 [SerializeField]
                 public Animator animator;
-            
-                private readonly LateUpdateMechanics lateUpdate = new();
-            
+                
                 [Construct]
                 public void Construct(HeroModel_Core core)
                 {
@@ -49,43 +47,34 @@ using Vector3 = UnityEngine.Vector3;
                     var inputVector = core.MoveComp.OnMove;
                     
                     isDeath.Subscribe((data) => animator.SetInteger(State, DEATH_STATE));
+                    moveRequired.Subscribe((state)=> animator.SetInteger(State, IDLE_STATE));
             
-                    lateUpdate.Construct(_ =>
+                    inputVector.Subscribe(direction =>
                     {
                         if (isDeath.Value)
                             return;
-                
-                        if (!moveRequired.Value)
+                        
+                        if (direction == Vector3.forward)
                         {
-                            animator.SetInteger(State, IDLE_STATE);
+                            animator.SetInteger(State, MOVE_STATE_FRONT);
                             return;
                         }
-                
-                        inputVector.Subscribe(direction =>
+                        if (direction == -Vector3.forward)
                         {
-                            if (isDeath.Value)
-                                return;
-                            if (direction == Vector3.forward)
-                            {
-                                animator.SetInteger(State, MOVE_STATE_FRONT);
-                                return;
-                            }
-                            if (direction == -Vector3.forward)
-                            {
-                                animator.SetInteger(State, MOVE_STATE_BACK);
-                                return;
-                            }
-                            if (direction == Vector3.left)
-                            {
-                                animator.SetInteger(State, MOVE_STATE_LEFT);
-                                return;
-                            }
-                            if (direction  == Vector3.right)
-                            {
-                                animator.SetInteger(State, MOVE_STATE_RIGHT);
-                            }
-                        });
+                            animator.SetInteger(State, MOVE_STATE_BACK);
+                            return;
+                        }
+                        if (direction == Vector3.left)
+                        {
+                            animator.SetInteger(State, MOVE_STATE_LEFT);
+                            return;
+                        }
+                        if (direction  == Vector3.right)
+                        {
+                            animator.SetInteger(State, MOVE_STATE_RIGHT);
+                        }
                     });
+                    
                 }
             }
         
