@@ -1,5 +1,4 @@
 using GamePlay.Custom.GameMachine;
-using GamePlay.Hero;
 using UnityEngine;
 
 namespace GamePlay.Custom.Input
@@ -7,16 +6,19 @@ namespace GamePlay.Custom.Input
    public class ShootInput : MonoBehaviour, IUpdateListener
    {
       [SerializeField]
-      private HeroModel _heroModel;
+      private Entity.Entity _entity;
 
       void IUpdateListener.Update()
       {
          if (UnityEngine.Input.GetMouseButtonDown(0))
-            OnPressed();
+            OnMousePressed();
       }
-      private void OnPressed()
+      private void OnMousePressed()
       {
-         _heroModel.Core.ShootComp.OnGetPressedFire.Invoke();
+         if (!_entity.TryGet(out IShootable shootable))
+            return;
+         
+         shootable.PressedFireButton();
       }
    }
 }

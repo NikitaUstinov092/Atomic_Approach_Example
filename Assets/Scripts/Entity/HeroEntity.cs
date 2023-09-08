@@ -14,6 +14,7 @@ namespace Entity
             Add(new TakeDamageComponent(model.Core.LifeComp.OnTakeDamage));
             Add(new RotateComponent(model.Core.RotateComp.RotationDirection));
             Add(new LifeComponent(model.Core.LifeComp));
+            Add(new ShootComponent(model.Core.ShootComp.OnGetPressedFire));
         }
     }
 }
