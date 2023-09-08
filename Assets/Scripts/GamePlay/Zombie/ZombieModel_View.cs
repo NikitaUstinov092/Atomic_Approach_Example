@@ -24,10 +24,10 @@ namespace GamePlay.Zombie
         [Construct]
         public void Construct(ZombieModel_Core core)
         {
-            var isDeath = core.Life.IsDead;
+            var isDeath = core.lifeSection.IsDead;
             var isChasing = core.ZombieChase.IsChasing;
             var stopAttack = core.AttackHero.StopAttack;
-            var distanceChecker = core.TargetDistance;
+            var distanceChecker = core.target;
             
             isDeath.Subscribe((state)=>  Animator.SetInteger(State, DEATH_STATE));
             

@@ -10,9 +10,9 @@ namespace Entity
         private ZombieModel model;
         private void Awake()
         {
-            Add(new TakeDamageComponent(model.Core.Life.OnTakeDamage));
-            Add(new SetTargetEntityComponent(model.Core.TargetDistance));
-            Add(new LifeComponent(model.Core.Life));
+            Add(new TakeDamageRequestComponent(model.Core.lifeSection.TakeDamageRequest));
+            Add(new SetTargetEntityComponent(model.Core.target));
+            Add(new DeathEventComponent(model.Core.lifeSection.DeathEvent));
         }
     }
 }

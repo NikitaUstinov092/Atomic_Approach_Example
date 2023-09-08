@@ -26,8 +26,8 @@ namespace GamePlay.Custom
 
         private void HandleEnemyCreated(Entity.Entity enemy)
         {
-            if (enemy.TryGet(out IGetLifeComponent lifeComp))
-                lifeComp.GetLifeComponent().OnDeath.Subscribe(() => StartCoroutine(DestroyEnemyAfterDelay(enemy.gameObject)));
+            if (enemy.TryGet(out IGetDeathEventComponent lifeComp))
+                lifeComp.GetDeathEvent().Subscribe(() => StartCoroutine(DestroyEnemyAfterDelay(enemy.gameObject)));
         }
 
         private IEnumerator DestroyEnemyAfterDelay(Object enemyObject)

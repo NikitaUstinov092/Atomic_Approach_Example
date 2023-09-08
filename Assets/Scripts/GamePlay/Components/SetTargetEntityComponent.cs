@@ -5,16 +5,16 @@ namespace GamePlay.Components
 {
     public class SetTargetEntityComponent: ISetEntityTargetComponent
     {
-        private readonly ZombieModel_Core.TargetDistanceChecker _targetDistanceChecker;
+        private readonly ZombieModel_Core.TargetChecker _targetChecker;
     
-        public SetTargetEntityComponent(ZombieModel_Core.TargetDistanceChecker targetDistanceChecker)
+        public SetTargetEntityComponent(ZombieModel_Core.TargetChecker targetChecker)
         {
-            _targetDistanceChecker = targetDistanceChecker;
+            _targetChecker = targetChecker;
         }
     
         void ISetEntityTargetComponent.SetEntityTarget(Entity.Entity entity)
         {
-            _targetDistanceChecker.Target.Value = entity;
+            _targetChecker.Target.Value = entity;
         }
     }
 }

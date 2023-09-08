@@ -34,11 +34,11 @@ namespace TMPro.Examples
                     break;
                 case BenchmarkType.TMP_SDF__MOBILE_SSD:
                     fontAsset = TMP_FontAsset.CreateFontAsset(SourceFont, 90, 9, GlyphRenderMode.SDFAA, 256, 256, AtlasPopulationMode.Dynamic);
-                    fontAsset.material.shader = Shader.Find("TextMeshPro/Mobile/TargetDistance Field SSD");
+                    fontAsset.material.shader = Shader.Find("TextMeshPro/Mobile/target Field SSD");
                     break;
                 case BenchmarkType.TMP_SDF:
                     fontAsset = TMP_FontAsset.CreateFontAsset(SourceFont, 90, 9, GlyphRenderMode.SDFAA, 256, 256, AtlasPopulationMode.Dynamic);
-                    fontAsset.material.shader = Shader.Find("TextMeshPro/TargetDistance Field");
+                    fontAsset.material.shader = Shader.Find("TextMeshPro/target Field");
                     break;
                 case BenchmarkType.TMP_BITMAP_MOBILE:
                     fontAsset = TMP_FontAsset.CreateFontAsset(SourceFont, 90, 9, GlyphRenderMode.SMOOTH, 256, 256, AtlasPopulationMode.Dynamic);

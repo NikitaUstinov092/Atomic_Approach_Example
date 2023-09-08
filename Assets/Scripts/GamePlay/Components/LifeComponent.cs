@@ -1,24 +1,25 @@
+using System.Atomic.Implementations;
 using GamePlay.Hero;
 
 namespace GamePlay.Components
 {
-    public interface IGetLifeComponent
+    public interface IGetDeathEventComponent
     {
-        HeroModel_Core.Life GetLifeComponent();
+        AtomicEvent GetDeathEvent();
     }
 
-    public class LifeComponent : IGetLifeComponent
+    public class DeathEventComponent : IGetDeathEventComponent
     {
-        private readonly HeroModel_Core.Life _lifeComp;
+        private readonly AtomicEvent DeathEvent;
     
-        public LifeComponent(HeroModel_Core.Life lifeComp)
+        public DeathEventComponent(AtomicEvent deathEvent)
         {
-            _lifeComp = lifeComp;
+            DeathEvent = deathEvent;
         }
     
-        public HeroModel_Core.Life GetLifeComponent()
+        public AtomicEvent GetDeathEvent()
         {
-            return _lifeComp;
+            return DeathEvent;
         }
     }
 }

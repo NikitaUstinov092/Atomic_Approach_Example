@@ -3,11 +3,11 @@ using GamePlay.Components.Interfaces;
 
 namespace GamePlay.Components
 {
-    public sealed class TakeDamageComponent : ITakeDamagable
+    public sealed class TakeDamageRequestComponent : ITakeDamagable
     {
         private readonly IAtomicAction<int> onTakeDamage;
 
-        public TakeDamageComponent(IAtomicAction<int> onTakeDamage)
+        public TakeDamageRequestComponent(IAtomicAction<int> onTakeDamage)
         {
             this.onTakeDamage = onTakeDamage;
         }

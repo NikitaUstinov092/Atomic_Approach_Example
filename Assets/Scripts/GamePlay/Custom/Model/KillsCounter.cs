@@ -1,4 +1,6 @@
 using System;
+using System.Atomic.Implementations;
+using System.Atomic.Interfaces;
 using GamePlay.Components;
 using GamePlay.Custom.GameMachine;
 using GamePlay.Hero;
@@ -30,16 +32,16 @@ namespace GamePlay.Custom
         }
         private void CheckLifeComponent(T enemy)
         {
-            if (enemy.TryGet(out IGetLifeComponent lifeComp))
+            if (enemy.TryGet(out IGetDeathEventComponent getDeathEventComponent))
             {
-                AddListenerDeathCount(lifeComp.GetLifeComponent());
+                AddListenerDeathCount(getDeathEventComponent.GetDeathEvent());
                 return;
             }
-            Debug.LogError($"Компонент Life не найден на сущности {enemy.name}");
+            Debug.LogError($"Компонент LifeSection не найден на сущности {enemy.name}");
         }
-        private void AddListenerDeathCount(HeroModel_Core.Life lifeComp)
+        private void AddListenerDeathCount(IAtomicObservable onDeath)
         {
-            lifeComp.OnDeath.Subscribe(CountDeath);
+            onDeath.Subscribe(CountDeath);
         }
         private void CountDeath()
         {

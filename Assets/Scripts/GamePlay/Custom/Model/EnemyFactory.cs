@@ -35,9 +35,8 @@ namespace GamePlay.Custom
         {
             while (TargetState())
             {
-                var spawnEntity =  Instantiate(_enemy, _spawnPoints[Random.Range(0, _spawnPoints.Length)]
-                    .position,Quaternion.identity);
-                
+                var spawnPosition = _spawnPoints[Random.Range(0, _spawnPoints.Length)];
+                var spawnEntity =  Instantiate(_enemy, spawnPosition.position,Quaternion.identity);
                 spawnEntity.transform.parent = _parent.transform;
                 
                 AddTarget(spawnEntity);

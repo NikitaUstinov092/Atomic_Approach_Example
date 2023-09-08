@@ -42,7 +42,7 @@ using Vector3 = UnityEngine.Vector3;
                 [Construct]
                 public void Construct(HeroModel_Core core)
                 {
-                    var isDeath = core.LifeComp.IsDead;
+                    var isDeath = core.lifeSectionComp.IsDead;
                     var moveRequired = core.MoveComp.MoveRequired;
                     var inputVector = core.MoveComp.OnMove;
                     
@@ -88,7 +88,7 @@ using Vector3 = UnityEngine.Vector3;
                 [Construct]
                 public void Construct(HeroModel_Core core)
                 {
-                    var hitPoints = core.LifeComp.HitPoints;
+                    var hitPoints = core.lifeSectionComp.HitPoints;
                     TextHp.Value.text = Title + hitPoints.Value;
                     hitPoints.Subscribe((newValue) => TextHp.Value.text = Title + newValue);
                 }

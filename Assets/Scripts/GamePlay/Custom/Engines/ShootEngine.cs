@@ -42,6 +42,5 @@ namespace GamePlay.Custom.Engines
             var localShootDirection = rotation * Vector3.forward;
             bullet.velocity = localShootDirection * _shootSpeed;
         }
-        
     }
 }

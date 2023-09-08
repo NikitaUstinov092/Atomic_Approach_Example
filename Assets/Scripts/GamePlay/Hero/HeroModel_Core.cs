@@ -1,9 +1,9 @@
 using System;
 using System.Atomic.Implementations;
 using System.Declarative.Scripts.Attributes;
-using GamePlay.Custom;
 using GamePlay.Custom.Engines;
 using GamePlay.Custom.ScriptableObjects;
+using GamePlay.Custom.Sections;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -14,9 +14,10 @@ using Object = UnityEngine.Object;
         [Serializable]
         public sealed class HeroModel_Core
         {
+            [FormerlySerializedAs("LifeComp")]
             [Section]
             [SerializeField]
-            public Life LifeComp = new();
+            public LifeSection lifeSectionComp = new();
             
             [Section]
             [SerializeField]
@@ -38,33 +39,7 @@ using Object = UnityEngine.Object;
             [SerializeField]
             public EntityContainer EntityStorageComp = new();
         
-            [Serializable]
-            public class Life
-            {
-                public AtomicEvent<int> OnTakeDamage = new();
-                public AtomicEvent OnDeath = new();
-                public AtomicVariable<int> HitPoints = new();
-                public AtomicVariable<bool> IsDead= new();
             
-                [Construct]
-                public void Construct()
-                {
-                    OnTakeDamage.Subscribe(damage =>
-                    {
-                        if (IsDead.Value)
-                            return;
-                        
-                        HitPoints.Value -= damage;
-
-                        if (HitPoints.Value != 0)
-                            return;
-                       
-                        IsDead.Value = true;
-                        OnDeath?.Invoke();
-                    });
-                }
-            }
-
             [Serializable]
             public class Move
             {
@@ -73,8 +48,6 @@ using Object = UnityEngine.Object;
                 
                 public AtomicVariable<float> Speed = new();
                 public AtomicVariable<bool> MoveRequired = new ();
-
-                private readonly FixedUpdateMechanics _fixedUpdate = new();
                 
                 [SerializeField]
                 private Transform _moveTransform;
@@ -82,28 +55,28 @@ using Object = UnityEngine.Object;
                 private Vector3 _moveDirection;
                 
                 [Construct]
-                public void Construct(Life life)
+                public void Construct(HeroModel model)
                 {
-                    var isDeath = life.IsDead;
+                    var isDeath = model.Core.lifeSectionComp.IsDead;
                     
                     OnMove.Subscribe(direction =>
                     {
                         if(isDeath.Value)
                             return;
-                        
-                        _moveDirection = (_moveTransform.forward * direction.z + _moveTransform.right * direction.x)
-                            .normalized;
+
+                        var moveVector = _moveTransform.forward * direction.z + _moveTransform.right * direction.x;
+                        _moveDirection = moveVector.normalized;
                         MoveRequired.Value = true;
                     });
 
-                    _fixedUpdate.Construct(deltaTime =>
+                    model.onFixedUpdate += deltaTime =>
                     {
                         if (!MoveRequired.Value || isDeath.Value) 
                             return;
                     
                         _moveTransform.position += _moveDirection * (Speed.Value * deltaTime);
                         MoveRequired.Value = false;
-                    });
+                    };
                 }
             }
             [Serializable]
@@ -123,9 +96,9 @@ using Object = UnityEngine.Object;
                 private RotationEngine _rotationMotor = new();
 
                 [Construct]
-                public void Construct(Life life)
+                public void Construct(LifeSection lifeSection)
                 {
-                    var isDeath = life.IsDead;
+                    var isDeath = lifeSection.IsDead;
 
                     _rotationMotor.Construct(_playerTransform, _playerCamera, RotationSpeed.Value);
                 
@@ -162,11 +135,11 @@ using Object = UnityEngine.Object;
                 private float _timer;
                 
                 [Construct]
-                public void Construct(Ammo ammo, Life life)
+                public void Construct(Ammo ammo, LifeSection lifeSection)
                 {
                     _shootEngine.Construct(BulletConfig.Value, _spawnPointShoot);
                 
-                    var isDead = life.IsDead;
+                    var isDead = lifeSection.IsDead;
                     var ammoCount = ammo.AmmoCount;
                     
                     isDead.Subscribe((data) => _canShoot = !data);
@@ -215,9 +188,9 @@ using Object = UnityEngine.Object;
                 private float _timer;
                 
                 [Construct]
-                public void Construct(Shoot shootComp, Life lifeComp)
+                public void Construct(Shoot shootComp, LifeSection lifeSectionComp)
                 {
-                    var isDead = lifeComp.IsDead;
+                    var isDead = lifeSectionComp.IsDead;
                     var shoot = shootComp.OnBulletCreated;
                     
                     isDead.Subscribe((data) => _canReload = !data);
@@ -256,9 +229,9 @@ using Object = UnityEngine.Object;
                 public Entity.Entity Entity;
 
                 [Construct]
-                public void Construct(Life life)
+                public void Construct(LifeSection lifeSection)
                 {
-                    life.OnDeath.Subscribe(() =>
+                    lifeSection.DeathEvent.Subscribe(() =>
                     {
                         Object.Destroy(Entity);
                     });

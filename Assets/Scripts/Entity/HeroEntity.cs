@@ -11,9 +11,9 @@ namespace Entity
         private void Awake()
         {
             Add(new MoveComponent(model.Core.MoveComp.OnMove));
-            Add(new TakeDamageComponent(model.Core.LifeComp.OnTakeDamage));
+            Add(new TakeDamageRequestComponent(model.Core.lifeSectionComp.TakeDamageRequest));
             Add(new RotateComponent(model.Core.RotateComp.RotationDirection));
-            Add(new LifeComponent(model.Core.LifeComp));
+            Add(new DeathEventComponent(model.Core.lifeSectionComp.DeathEvent));
             Add(new ShootComponent(model.Core.ShootComp.OnGetPressedFire));
         }
     }

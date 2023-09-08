@@ -2,8 +2,9 @@
 using System.Atomic.Implementations;
 using System.Declarative.Scripts.Attributes;
 using GamePlay.Components.Interfaces;
-using GamePlay.Hero;
+using GamePlay.Custom.Sections;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UpdateMechanics;
 using Random = UnityEngine.Random;
 
@@ -12,17 +13,19 @@ using Random = UnityEngine.Random;
         [Serializable]
         public sealed class ZombieModel_Core
         {
+            [FormerlySerializedAs("Life")]
             [Section]
             [SerializeField]
-            public HeroModel_Core.Life Life = new();
+            public LifeSection lifeSection = new();
 
             [Section]
             [SerializeField] 
             public Chase ZombieChase = new();
             
+            [FormerlySerializedAs("TargetDistance")]
             [Section]
             [SerializeField] 
-            public TargetDistanceChecker TargetDistance = new();
+            public TargetChecker target = new();
         
             [Section]
             [SerializeField] 
@@ -42,21 +45,21 @@ using Random = UnityEngine.Random;
                 private readonly FixedUpdateMechanics _fixedUpdate = new();
 
                 [Construct]
-                public void Construct(HeroModel_Core.Life life, TargetDistanceChecker targetDistanceChecker)
+                public void Construct(LifeSection lifeSection, TargetChecker targetChecker)
                 {
-                    var isDeath = life.IsDead;
-                    var closedToTarget = targetDistanceChecker.ClosedTarget;
+                    var isDeath = lifeSection.IsDead;
+                    var closedToTarget = targetChecker.ClosedTarget;
                     
                     _speed = Random.Range(MinSpeed.Value, MaxSpeed.Value);
 
                     _fixedUpdate.Construct(deltaTime =>
                     {
-                        if (isDeath.Value || closedToTarget.Value || targetDistanceChecker.Target.Value == null)
+                        if (isDeath.Value || closedToTarget.Value || targetChecker.Target.Value == null)
                         {
                             IsChasing.Value = false;
                             return;
                         }
-                        var targetPosition = targetDistanceChecker.Target.Value.transform.position;
+                        var targetPosition = targetChecker.Target.Value.transform.position;
                     
                         MoveTransform.position = Vector3.MoveTowards( MoveTransform.position, targetPosition, _speed * deltaTime);
                         MoveTransform.LookAt(targetPosition);
@@ -66,7 +69,7 @@ using Random = UnityEngine.Random;
             }
         
             [Serializable]
-            public sealed class TargetDistanceChecker
+            public sealed class TargetChecker
             {
                 [SerializeField]
                 public Transform MoveTransform;
@@ -103,27 +106,27 @@ using Random = UnityEngine.Random;
                 private float _timer;
             
                 [Construct]
-                public void Construct(TargetDistanceChecker targetDistanceChecker, HeroModel_Core.Life life)
+                public void Construct(TargetChecker targetChecker, LifeSection lifeSection)
                 {
-                    var target =  targetDistanceChecker.Target;
+                    var target =  targetChecker.Target;
                     target.Subscribe((entity) => StopAttack.Value = entity == null);
-                    life.IsDead.Subscribe((dead) => StopAttack.Value = dead);
+                    lifeSection.IsDead.Subscribe((dead) => StopAttack.Value = dead);
                     
                     _lateUpdate.Construct(deltaTime=>
                     {
                         if(StopAttack.Value)
                             return;
                        
-                        if (!targetDistanceChecker.ClosedTarget.Value)
+                        if (!targetChecker.ClosedTarget.Value)
                             return;
                       
                         _timer += deltaTime;
                         
-                        if (!(_timer >= AttackDelay.Value || life.IsDead.Value)) 
+                        if (!(_timer >= AttackDelay.Value || lifeSection.IsDead.Value)) 
                             return;
                         
-                        if (targetDistanceChecker.Target.Value != null && 
-                            targetDistanceChecker.Target.Value.TryGet(out ITakeDamagable damage))
+                        if (targetChecker.Target.Value != null && 
+                            targetChecker.Target.Value.TryGet(out ITakeDamagable damage))
                             damage.TakeDamage(Damage.Value);
                         
                         _timer = 0f;
